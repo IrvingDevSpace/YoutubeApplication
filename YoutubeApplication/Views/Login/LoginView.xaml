@@ -1,0 +1,96 @@
+﻿<UserControl x:Class="YoutubeApplication.Views.Login.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:YoutubeApplication.Views.Login"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+
+    <Grid Background="#F9F9F9">
+        <StackPanel MaxWidth="500"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+
+            <Image Source="/Assets/youtube_logo.png"
+                   Height="200"
+                   Stretch="Uniform"
+                   Margin="0,0,0,10" />
+
+            <Button Command="{Binding LoginCommand}"
+                    Width="250"
+                    Height="45"
+                    Background="White"
+                    BorderBrush="#FF938C8C"
+                    BorderThickness="1"
+                    Cursor="Hand">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0"
+                           Source="/Assets/google_logo.png"
+                           Width="20"
+                           Height="20"
+                           HorizontalAlignment="Center" />
+
+                    <TextBlock Grid.Column="1"
+                               Text="使用 Google 帳戶登入"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               Foreground="#3C4043" />
+                </Grid>
+
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius"
+                                Value="6" />
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <ProgressBar IsIndeterminate="True"
+                         Width="200"
+                         Height="5"
+                         Margin="0,20,0,0">
+                <ProgressBar.Style>
+                    <Style TargetType="ProgressBar">
+                        <Setter Property="Visibility"
+                                Value="Hidden" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsLoading}"
+                                         Value="True">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ProgressBar.Style>
+            </ProgressBar>
+
+            <TextBlock Text="正在等待網頁驗證..."
+                       HorizontalAlignment="Center"
+                       Margin="0,10,0,0"
+                       Foreground="Gray">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility"
+                                Value="Hidden" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsLoading}"
+                                         Value="True">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

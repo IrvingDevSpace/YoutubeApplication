@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="YoutubeApplication.Views.Home.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:YoutubeApplication.Views.Home"
+             xmlns:search="clr-namespace:YoutubeApplication.Components.SearchBarComponent"
+             xmlns:video="clr-namespace:YoutubeApplication.Components.VideoCardComponent"
+             xmlns:pagination="clr-namespace:YoutubeApplication.Components.PaginationComponent"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <search:SearchBarView DataContext="{Binding SearchBar}"
+                              Grid.Row="0"
+                              MaxWidth="400"
+                              Margin="10" />
+
+        <ListBox Grid.Row="1"
+                 ItemsSource="{Binding VideoCards}"
+                 BorderThickness="0"
+                 Background="Transparent"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="5"
+                                 VerticalAlignment="Top" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment"
+                            Value="Stretch" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type video:VideoCardViewModel}">
+                    <video:VideoCardView Margin="8" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Grid Grid.Row="1">
+
+            <ProgressBar IsIndeterminate="True"
+                         Width="200"
+                         Height="20"
+                         Margin="0,20,0,0"
+                         VerticalAlignment="Center">
+                <ProgressBar.Style>
+                    <Style TargetType="ProgressBar">
+                        <Setter Property="Visibility"
+                                Value="Hidden" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsLoading}"
+                                         Value="True">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ProgressBar.Style>
+            </ProgressBar>
+        </Grid>
+
+        <pagination:PaginationView DataContext="{Binding Pagination}"
+                                   Grid.Row="2"
+                                   Margin="0,20" />
+    </Grid>
+</UserControl>

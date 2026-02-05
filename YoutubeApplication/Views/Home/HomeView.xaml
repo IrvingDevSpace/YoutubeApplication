@@ -17,7 +17,12 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <search:SearchBarView DataContext="{Binding SearchBar}"
+        <!--<search:SearchBarView OnSearchCommand="{Binding DataContext.OnSearchCommand,RelativeSource={RelativeSource AncestorType=UserControl}}"
+                              Grid.Row="0"
+                              MaxWidth="400"
+                              Margin="10" />-->
+
+        <search:SearchBarView OnSearchCommand="{Binding DataContext.OnSearchCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                               Grid.Row="0"
                               MaxWidth="400"
                               Margin="10" />

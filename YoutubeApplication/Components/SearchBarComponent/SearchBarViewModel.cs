@@ -11,27 +11,30 @@ namespace YoutubeApplication.Components.SearchBarComponent
 
         public bool IsSearching { get; set; }
 
-        public event Func<string, Task>? OnSearchRequestedAsync;
-
         public ICommand SearchCommand { get; }
+
+        public ICommand? ExternalSearchCommand { get; set; }
+
+        //public Func<string, Task>? ExternalSearchAsync { get; set; }
 
         public SearchBarViewModel()
         {
             SearchCommand = new RelayCommand(
-                execute: async () =>
+                execute: () =>
                 {
                     if (IsSearching) return;
 
+                    IsSearching = true;
                     try
                     {
-                        IsSearching = true;
+                        ExternalSearchCommand?.Execute(Keyword);
 
-                        if (OnSearchRequestedAsync != null)
-                            await OnSearchRequestedAsync.Invoke(Keyword.Trim());
+                        //if (ExternalSearchAsync != null)
+                        //    await ExternalSearchAsync(Keyword);
                     }
                     finally
                     {
-                        IsSearching = false; // 3. 搜尋結束，按鈕恢復可用
+                        IsSearching = false;
                     }
                 },
                 canExecute: () => !string.IsNullOrWhiteSpace(Keyword) && !IsSearching

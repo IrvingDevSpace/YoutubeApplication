@@ -1,12 +1,111 @@
 ﻿<UserControl x:Class="YoutubeApplication.Components.SegmentedComponent.SegmentedView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:YoutubeApplication.Components.SegmentedComponent"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="SegmentedBackground"
+                         Color="#2b2b2b" />
+        <SolidColorBrush x:Key="SegmentedSelectedBrush"
+                         Color="#FFFFFF" />
+        <SolidColorBrush x:Key="SegmentedTextSelectedBrush"
+                         Color="#000000" />
+        <SolidColorBrush x:Key="SegmentedTextDefaultBrush"
+                         Color="#AAAAAA" />
+
+        <Style x:Key="VerticalSegmentedStyle"
+               TargetType="ListBox">
+            <Setter Property="Background"
+                    Value="{StaticResource SegmentedBackground}" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Padding"
+                    Value="4" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+                    Value="Disabled" />
+            <Setter Property="VerticalAlignment"
+                    Value="Top" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ItemsPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Background"
+                                Value="Transparent" />
+                        <Setter Property="Margin"
+                                Value="0,2" />
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border x:Name="ActiveBorder"
+                                            CornerRadius="6"
+                                            Background="{TemplateBinding Background}"
+                                            Padding="12,10">
+                                        <TextBlock x:Name="ContentText"
+                                                   Text="{Binding}"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{StaticResource SegmentedTextDefaultBrush}" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver"
+                                                 Value="True">
+                                            <Setter TargetName="ActiveBorder"
+                                                    Property="Background"
+                                                    Value="#3fffffff" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected"
+                                                 Value="True">
+                                            <Setter TargetName="ActiveBorder"
+                                                    Property="Background"
+                                                    Value="{StaticResource SegmentedSelectedBrush}" />
+                                            <Setter TargetName="ContentText"
+                                                    Property="Foreground"
+                                                    Value="{StaticResource SegmentedTextSelectedBrush}" />
+                                            <Setter TargetName="ContentText"
+                                                    Property="FontWeight"
+                                                    Value="Bold" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="{Binding Title, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                   FontWeight="Bold"
+                   Margin="0,6,0,8" />
+
+        <ListBox Grid.Row="1"
+                 Style="{StaticResource VerticalSegmentedStyle}"
+                 ItemsSource="{Binding Options, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                 SelectedItem="{Binding Option, RelativeSource={RelativeSource AncestorType=UserControl}}" />
     </Grid>
+
 </UserControl>

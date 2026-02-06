@@ -1,4 +1,5 @@
 ﻿using YoutubeAPI.Enums.Search;
+using YoutubeAPI.Models.Search;
 
 namespace YoutubeApplication.Views.SearchFilter
 {
@@ -68,6 +69,18 @@ namespace YoutubeApplication.Views.SearchFilter
             SelectedOrder = OrderOptions[0];
             SelectedDuration = DurationOptions[0];
             SelectedDate = DateOptions[0];
+        }
+
+        public YouTubeSearchReq GetSearchRequest(string keyword)
+        {
+            return new YouTubeSearchReq
+            {
+                Keyword = keyword,
+                Type = _typeMap[SelectedType],
+                Duration = _durationMap[SelectedDuration],
+                Date = _dateMap[SelectedDate],
+                Order = _orderMap[SelectedOrder]
+            };
         }
     }
 }

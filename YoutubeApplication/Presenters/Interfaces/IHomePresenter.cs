@@ -6,5 +6,7 @@ namespace YoutubeApplication.Presenters.Interfaces
     public interface IHomePresenter
     {
         Task<Result<List<SearchItem>>> SearchByCategoryAsync(string text, string category);
+
+        Task<Result<List<SearchItem>>> SearchAsync(YouTubeSearchReq req);
     }
 }

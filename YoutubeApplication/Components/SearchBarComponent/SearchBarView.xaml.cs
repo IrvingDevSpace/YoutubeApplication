@@ -15,7 +15,19 @@ namespace YoutubeApplication.Components.SearchBarComponent
         {
             InitializeComponent();
             DataContext = _vm;
+
+            _vm.OnKeywordChange += (keyword) => Keyword = keyword;
         }
+
+        public string Keyword
+        {
+            get => (string)GetValue(KeywordProperty);
+            set => SetValue(KeywordProperty, value);
+        }
+
+        public static readonly DependencyProperty KeywordProperty =
+            DependencyProperty.Register(nameof(Keyword), typeof(string), typeof(SearchBarView),
+                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public ICommand OnSearchCommand
         {

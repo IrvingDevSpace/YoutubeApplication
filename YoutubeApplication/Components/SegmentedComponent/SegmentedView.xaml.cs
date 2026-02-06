@@ -14,6 +14,16 @@ namespace YoutubeApplication.Components.SegmentedComponent
             InitializeComponent();
         }
 
+        public string Title
+        {
+            get => (string)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
+        }
+
+        public static readonly DependencyProperty TitleProperty =
+            DependencyProperty.Register(nameof(Title), typeof(string), typeof(SegmentedView),
+                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
         public IEnumerable Options
         {
             get => (IEnumerable)GetValue(OptionsProperty);

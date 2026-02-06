@@ -9,6 +9,13 @@ namespace YoutubeApplication.Components.SearchBarComponent
     {
         public string Keyword { get; set; } = "";
 
+        public event Action<string>? OnKeywordChange;
+
+        public void OnKeywordChanged()
+        {
+            OnKeywordChange?.Invoke(Keyword);
+        }
+
         public bool IsSearching { get; set; }
 
         public ICommand SearchCommand { get; }

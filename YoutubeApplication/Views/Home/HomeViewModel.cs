@@ -6,6 +6,7 @@ using YoutubeApplication.Common;
 using YoutubeApplication.Components.VideoCardComponent;
 using YoutubeApplication.Enums;
 using YoutubeApplication.Presenters.Interfaces;
+using YoutubeApplication.Views.SearchFilter;
 
 namespace YoutubeApplication.Views.Home
 {
@@ -14,6 +15,8 @@ namespace YoutubeApplication.Views.Home
         private readonly IHomePresenter _presenter;
 
         private List<SearchItem> _allSearchItems = []; // 暫存所有原始資料
+
+        public string Keyword { get; set; }
 
         public int Total { get; set; }
 
@@ -31,17 +34,31 @@ namespace YoutubeApplication.Views.Home
 
         public ICommand OnSearchCommand { get; set; }
 
+        public bool IsSearchFilterOpen { get; set; }
+
+        public SearchFilterViewModel Filter { get; } = new SearchFilterViewModel();
+
+        public ICommand OpenSearchFilterCommand { get; }
+        public ICommand CloseSearchFilterCommand { get; }
+
+        public ICommand ApplySearchFilterCommand { get; }
+
         public HomeViewModel(IHomePresenter presenter)
         {
             _presenter = presenter;
-            OnSearchCommand = new AsyncRelayCommand<string>(ExecuteSearchAsync);
+            OnSearchCommand = new AsyncRelayCommand(ExecuteSearchAsync);
             OnPageIndexChangeCommand = new RelayCommand(UpdateDisplayCards);
             OnPageSizeChangeCommand = new RelayCommand(UpdateDisplayCards);
+
+            OpenSearchFilterCommand = new RelayCommand(() => IsSearchFilterOpen = true);
+            CloseSearchFilterCommand = new RelayCommand(() => IsSearchFilterOpen = false);
+            ApplySearchFilterCommand = new AsyncRelayCommand(ExecuteSearchAsync);
         }
 
-        private async Task ExecuteSearchAsync(string keyword)
+        private async Task ExecuteSearchAsync()
         {
-            if (string.IsNullOrWhiteSpace(keyword)) return;
+            if (string.IsNullOrWhiteSpace(Keyword)) return;
+            var req = Filter.GetSearchRequest(Keyword);
 
             if (IsLoading) return;
 
@@ -53,7 +70,9 @@ namespace YoutubeApplication.Views.Home
 
                 //await Task.Delay(10000);
 
-                var result = await _presenter.SearchByCategoryAsync(keyword, SearchCategory.ToString());
+                //var result = await _presenter.SearchByCategoryAsync(keyword, SearchCategory.ToString());
+
+                var result = await _presenter.SearchAsync(req);
 
                 if (!result.IsSuccess)
                 {
@@ -70,6 +89,7 @@ namespace YoutubeApplication.Views.Home
             }
             finally
             {
+                IsSearchFilterOpen = false;
                 IsLoading = false;
             }
         }

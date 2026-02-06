@@ -9,11 +9,21 @@ namespace YoutubeApplication.Components.PaginationComponent
     {
         private readonly int _basePageSize = 5;
 
-        public int PageIndex { get; set; } = 1;
-
         public int Total { get; set; } = 0;
 
+        public int PageIndex { get; set; } = 1;
+
+        public void OnPageIndexChanged()
+        {
+            OnPageIndexChange?.Invoke(PageIndex);
+        }
+
         public int PageSize { get; set; }
+
+        public void OnPageSizeChanged()
+        {
+            OnPageSizeChange?.Invoke(PageSize);
+        }
 
         public int TotalPageCount => Total == 0 ? 1 : (int)Math.Ceiling((double)Total / PageSize);
 
@@ -34,36 +44,41 @@ namespace YoutubeApplication.Components.PaginationComponent
             }
         }
 
-        public event Action<int>? OnPageIndexChange;
-
-        public event Action<int>? OnPageSizeChange;
-
         public ICommand PreviousPageCommand { get; }
 
         public ICommand NextPageCommand { get; }
 
         public ICommand SetPageIndexCommand { get; }
 
+        public event Action<int>? OnPageIndexChange;
+
+        public ICommand? ExternalOnPageIndexChangeCommand { get; set; }
+
         public ICommand SetPageSizeCommand { get; }
+
+        public event Action<int>? OnPageSizeChange;
+
+        public ICommand? ExternalOnPageSizeChangeCommand { get; set; }
 
         public PaginationViewModel()
         {
             PageSize = _basePageSize;
 
-            PreviousPageCommand = new RelayCommand(() => SetPageIndex(PageIndex - 1), () => PageIndex > 1);
-            NextPageCommand = new RelayCommand(() => SetPageIndex(PageIndex + 1), () => PageIndex < TotalPageCount);
-            SetPageIndexCommand = new RelayCommand<int>(SetPageIndex);
-            SetPageSizeCommand = new RelayCommand<int>(SetPageSize);
+            PreviousPageCommand = new AsyncRelayCommand(() => SetPageIndex(PageIndex - 1), () => PageIndex > 1);
+            NextPageCommand = new AsyncRelayCommand(() => SetPageIndex(PageIndex + 1), () => PageIndex < TotalPageCount);
+            SetPageIndexCommand = new AsyncRelayCommand<int>(SetPageIndex);
+            SetPageSizeCommand = new AsyncRelayCommand<int>(SetPageSizeAsync);
         }
 
-        private void SetPageIndex(int index)
+        private async Task SetPageIndex(int index)
         {
             if (index < 1 || index > TotalPageCount) return;
             PageIndex = index;
-            OnPageIndexChange?.Invoke(PageIndex);
+
+            await ExternalOnPageIndexChangeCommand.ExecuteAsync(index);
         }
 
-        private void SetPageSize(int size)
+        private async Task SetPageSizeAsync(int size)
         {
             if (size <= 0) return;
             PageSize = size;
@@ -71,7 +86,7 @@ namespace YoutubeApplication.Components.PaginationComponent
             if (PageIndex > TotalPageCount)
                 PageIndex = TotalPageCount;
 
-            OnPageSizeChange?.Invoke(PageSize);
+            await ExternalOnPageSizeChangeCommand.ExecuteAsync(size);
         }
     }
 }

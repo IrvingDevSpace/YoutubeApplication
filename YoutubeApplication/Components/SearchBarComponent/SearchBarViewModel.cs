@@ -19,26 +19,32 @@ namespace YoutubeApplication.Components.SearchBarComponent
 
         public SearchBarViewModel()
         {
-            SearchCommand = new RelayCommand(
-                execute: () =>
-                {
-                    if (IsSearching) return;
-
-                    IsSearching = true;
-                    try
-                    {
-                        ExternalSearchCommand?.Execute(Keyword);
-
-                        //if (ExternalSearchAsync != null)
-                        //    await ExternalSearchAsync(Keyword);
-                    }
-                    finally
-                    {
-                        IsSearching = false;
-                    }
-                },
-                canExecute: () => !string.IsNullOrWhiteSpace(Keyword) && !IsSearching
+            SearchCommand = new AsyncRelayCommand(
+                execute: ExecuteSearch,
+                canExecute: CanExecuteSearch
             );
+        }
+
+        private bool CanExecuteSearch()
+        {
+            return !string.IsNullOrWhiteSpace(Keyword) &&
+                   !IsSearching &&
+                   (ExternalSearchCommand?.CanExecute(Keyword) ?? true);
+        }
+
+        private async Task ExecuteSearch()
+        {
+            if (IsSearching) return;
+
+            IsSearching = true;
+            try
+            {
+                await ExternalSearchCommand.ExecuteAsync(Keyword);
+            }
+            finally
+            {
+                IsSearching = false;
+            }
         }
     }
 }

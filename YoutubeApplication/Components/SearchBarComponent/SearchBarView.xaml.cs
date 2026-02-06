@@ -24,13 +24,8 @@ namespace YoutubeApplication.Components.SearchBarComponent
         }
 
         public static readonly DependencyProperty OnSearchCommandProperty =
-            DependencyProperty.Register(nameof(OnSearchCommand), typeof(ICommand), typeof(SearchBarView), new PropertyMetadata(OnSearchCommandChanged));
-
-        private static void OnSearchCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var view = (SearchBarView)d;
-            view._vm.ExternalSearchCommand = e.NewValue as ICommand;
-        }
+            DependencyProperty.Register(nameof(OnSearchCommand), typeof(ICommand), typeof(SearchBarView),
+                 new PropertyMetadata((d, e) => ((SearchBarView)d)._vm.ExternalSearchCommand = (ICommand)e.NewValue));
 
         //public Func<string, Task>? OnSearchAsync
         //{

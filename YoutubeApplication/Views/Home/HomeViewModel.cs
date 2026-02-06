@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Windows.Input;
 using YoutubeAPI.Models.Search;
 using YoutubeApplication.Common;
-using YoutubeApplication.Components.PaginationComponent;
 using YoutubeApplication.Components.VideoCardComponent;
 using YoutubeApplication.Enums;
 using YoutubeApplication.Presenters.Interfaces;
@@ -16,25 +15,28 @@ namespace YoutubeApplication.Views.Home
 
         private List<SearchItem> _allSearchItems = []; // 暫存所有原始資料
 
-        //public SearchBarViewModel SearchBar { get; } = new SearchBarViewModel();
+        public int Total { get; set; }
 
-        public PaginationViewModel Pagination { get; } = new PaginationViewModel();
+        public int PageIndex { get; set; } = 1;
+
+        public int PageSize { get; set; } = 5;
+
+        public ICommand OnPageIndexChangeCommand { get; set; }
+
+        public ICommand OnPageSizeChangeCommand { get; set; }
 
         public Category SearchCategory { get; set; } = Category.Video;
 
-        public ObservableCollection<VideoCardViewModel> VideoCards { get; set; } = [];
+        public ObservableCollection<VideoCard> VideoCards { get; set; } = [];
 
-        public ICommand OnSearchCommand { get; }
-
-        //public Func<string, Task> HandleSearchAsync { get; private set; }
+        public ICommand OnSearchCommand { get; set; }
 
         public HomeViewModel(IHomePresenter presenter)
         {
             _presenter = presenter;
-            OnSearchCommand = new RelayCommand<string>(async (keyword) => await ExecuteSearchAsync(keyword));
-            //HandleSearchAsync = ExecuteSearchAsync;
-            Pagination.OnPageIndexChange += (index) => UpdateDisplayCards();
-            Pagination.OnPageSizeChange += (size) => UpdateDisplayCards();
+            OnSearchCommand = new AsyncRelayCommand<string>(ExecuteSearchAsync);
+            OnPageIndexChangeCommand = new RelayCommand(UpdateDisplayCards);
+            OnPageSizeChangeCommand = new RelayCommand(UpdateDisplayCards);
         }
 
         private async Task ExecuteSearchAsync(string keyword)
@@ -47,6 +49,10 @@ namespace YoutubeApplication.Views.Home
 
             try
             {
+                Debug.WriteLine($"Total, {Total} {PageIndex} {PageSize}");
+
+                //await Task.Delay(10000);
+
                 var result = await _presenter.SearchByCategoryAsync(keyword, SearchCategory.ToString());
 
                 if (!result.IsSuccess)
@@ -58,7 +64,7 @@ namespace YoutubeApplication.Views.Home
                 if (result.Data != null)
                 {
                     _allSearchItems = result.Data;
-                    Pagination.Total = _allSearchItems.Count;
+                    Total = _allSearchItems.Count;
                     UpdateDisplayCards();
                 }
             }
@@ -70,21 +76,23 @@ namespace YoutubeApplication.Views.Home
 
         private void UpdateDisplayCards()
         {
+            Debug.WriteLine($"UpdateDisplayCards, {Total} {PageIndex} {PageSize}");
+
             VideoCards.Clear();
 
-            int skip = (Pagination.PageIndex - 1) * Pagination.PageSize;
-            var pagedData = _allSearchItems
+            int skip = (PageIndex - 1) * PageSize;
+            var currentPageItems = _allSearchItems
                 .Skip(skip)
-                .Take(Pagination.PageSize);
+                .Take(PageSize);
 
-            foreach (var item in pagedData)
+            foreach (var item in currentPageItems)
             {
                 var snippet = item.Snippet;
 
-                var videoCardVm = new VideoCardViewModel(new VideoCardPresenter())
+                var videoCardVm = new VideoCard
                 {
-                    VideoUrl = $"https://www.youtube.com/watch?v={item.Id.VideoId}",
                     Title = snippet.Title,
+                    VideoUrl = $"https://www.youtube.com/watch?v={item.Id.VideoId}",
                     ImgSrc = snippet.Thumbnails.High.Url,
                     ChannelName = snippet.ChannelTitle,
                     Views = new Random().Next(1000, 1000000),

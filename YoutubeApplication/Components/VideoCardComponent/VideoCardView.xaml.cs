@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace YoutubeApplication.Components.VideoCardComponent
 {
@@ -20,9 +8,21 @@ namespace YoutubeApplication.Components.VideoCardComponent
     /// </summary>
     public partial class VideoCardView : UserControl
     {
+        private readonly VideoCardViewModel _vm = new(new VideoCardPresenter());
+
         public VideoCardView()
         {
             InitializeComponent();
+            DataContext = _vm;
         }
+
+        public VideoCard VideoCard
+        {
+            get => (VideoCard)GetValue(VideoCardProperty);
+            set => SetValue(VideoCardProperty, value);
+        }
+        public static readonly DependencyProperty VideoCardProperty =
+            DependencyProperty.Register(nameof(VideoCard), typeof(VideoCard), typeof(VideoCardView),
+                new PropertyMetadata(new VideoCard(), (d, e) => ((VideoCardView)d)._vm.VideoCard = (VideoCard)e.NewValue));
     }
 }

@@ -18,9 +18,9 @@
         </Grid.RowDefinitions>
 
         <!--<search:SearchBarView OnSearchCommand="{Binding DataContext.OnSearchCommand,RelativeSource={RelativeSource AncestorType=UserControl}}"
-                              Grid.Row="0"
-                              MaxWidth="400"
-                              Margin="10" />-->
+                          Grid.Row="0"
+                          MaxWidth="400"
+                          Margin="10" />-->
 
         <search:SearchBarView OnSearchCommand="{Binding DataContext.OnSearchCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                               Grid.Row="0"
@@ -57,8 +57,9 @@
             </ListBox.ItemContainerStyle>
 
             <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type video:VideoCardViewModel}">
-                    <video:VideoCardView Margin="8" />
+                <DataTemplate>
+                    <video:VideoCardView VideoCard="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                         Margin="8" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -85,8 +86,11 @@
                 </ProgressBar.Style>
             </ProgressBar>
         </Grid>
-
-        <pagination:PaginationView DataContext="{Binding Pagination}"
+        <pagination:PaginationView Total="{Binding DataContext.Total, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                   PageIndex="{Binding DataContext.PageIndex, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                   PageSize="{Binding DataContext.PageSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                   OnPageIndexChangeCommand="{Binding DataContext.OnPageIndexChangeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                   OnPageSizeChangeCommand="{Binding DataContext.OnPageSizeChangeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                    Grid.Row="2"
                                    Margin="0,20" />
     </Grid>

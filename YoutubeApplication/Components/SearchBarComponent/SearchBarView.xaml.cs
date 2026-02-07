@@ -27,7 +27,7 @@ namespace YoutubeApplication.Components.SearchBarComponent
 
         public static readonly DependencyProperty KeywordProperty =
             DependencyProperty.Register(nameof(Keyword), typeof(string), typeof(SearchBarView),
-                new FrameworkPropertyMetadata(""));
+               new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public bool IsSearching
         {
@@ -36,7 +36,8 @@ namespace YoutubeApplication.Components.SearchBarComponent
         }
 
         public static readonly DependencyProperty IsSearchingProperty =
-            DependencyProperty.Register(nameof(IsSearching), typeof(bool), typeof(SearchBarView), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsSearching), typeof(bool), typeof(SearchBarView),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public ICommand OnSearchCommand
         {
@@ -44,7 +45,7 @@ namespace YoutubeApplication.Components.SearchBarComponent
             set { SetValue(OnSearchCommandProperty, value); }
         }
 
-        public readonly DependencyProperty OnSearchCommandProperty =
+        public static readonly DependencyProperty OnSearchCommandProperty =
             DependencyProperty.Register(nameof(OnSearchCommand), typeof(ICommand), typeof(SearchBarView),
                  new PropertyMetadata((d, e) => ((SearchBarView)d).OnSearchCommand = (ICommand)e.NewValue));
 

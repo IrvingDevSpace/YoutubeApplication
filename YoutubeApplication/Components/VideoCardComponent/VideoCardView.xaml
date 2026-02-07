@@ -11,7 +11,7 @@
             CornerRadius="12">
         <Border.InputBindings>
             <MouseBinding MouseAction="LeftClick"
-                          Command="{Binding OpenVideoCommand}" />
+                          Command="{Binding OpenVideoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
         </Border.InputBindings>
 
         <Border.Style>
@@ -62,13 +62,13 @@
                     CornerRadius="12"
                     Margin="0,0,0,12"
                     ClipToBounds="True">
-                <Image Source="{Binding VideoCard.ImgSrc, TargetNullValue={x:Null}}"
+                <Image Source="{Binding ImgSrc, TargetNullValue={x:Null}}"
                        Stretch="UniformToFill"
                        RenderOptions.BitmapScalingMode="HighQuality" />
             </Border>
 
             <TextBlock Grid.Row="1"
-                       Text="{Binding VideoCard.Title}"
+                       Text="{Binding Title}"
                        FontSize="16"
                        Foreground="#FFF1F1F1"
                        TextWrapping="Wrap"
@@ -76,12 +76,12 @@
                        TextTrimming="CharacterEllipsis" />
 
             <TextBlock Grid.Row="2"
-                       Text="{Binding VideoCard.ChannelName}"
+                       Text="{Binding ChannelName}"
                        FontSize="14"
                        Foreground="#FFAAAAAA" />
 
             <TextBlock Grid.Row="3"
-                       Text="{Binding VideoCard.ViewSummary}"
+                       Text="{Binding ViewSummary}"
                        FontSize="14"
                        Foreground="#FFAAAAAA" />
 

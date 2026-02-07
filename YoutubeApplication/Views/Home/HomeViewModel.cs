@@ -36,6 +36,8 @@ namespace YoutubeApplication.Views.Home
 
         public bool IsSearchFilterOpen { get; set; }
 
+        public ICommand OnOpenVideoCommand { get; set; }
+
         public SearchFilterViewModel Filter { get; } = new SearchFilterViewModel();
 
         public ICommand OpenSearchFilterCommand { get; }
@@ -48,6 +50,8 @@ namespace YoutubeApplication.Views.Home
             OnSearchCommand = new AsyncRelayCommand(ExecuteSearchAsync);
             OnPageIndexChangeCommand = new RelayCommand(UpdateDisplayCards);
             OnPageSizeChangeCommand = new RelayCommand(UpdateDisplayCards);
+
+            OnOpenVideoCommand = new RelayCommand<string>((url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
 
             OpenSearchFilterCommand = new RelayCommand(() => IsSearchFilterOpen = true);
             CloseSearchFilterCommand = new RelayCommand(() => IsSearchFilterOpen = false);

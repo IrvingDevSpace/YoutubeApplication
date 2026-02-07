@@ -64,7 +64,8 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <video:VideoCardView VideoCard="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                    <video:VideoCardView VideoCard="{Binding}"
+                                         OnOpenVideoCommand="{Binding DataContext.OnOpenVideoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                          Margin="8" />
                 </DataTemplate>
             </ListBox.ItemTemplate>

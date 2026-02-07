@@ -21,26 +21,26 @@
             <!-- 類型 -->
             <segmented:SegmentedView Grid.Column="0"
                                      Title="類型"
-                                     Options="{Binding DataContext.TypeOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                     Option="{Binding DataContext.SelectedType, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                     Options="{Binding TypeOptions}"
+                                     Option="{Binding SelectedType}" />
 
             <!-- 片長 -->
             <segmented:SegmentedView Grid.Column="1"
                                      Title="片長"
-                                     Options="{Binding DataContext.DurationOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                     Option="{Binding DataContext.SelectedDuration, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                     Options="{Binding DurationOptions}"
+                                     Option="{Binding SelectedDuration}" />
 
             <!-- 上傳日期 -->
             <segmented:SegmentedView Grid.Column="2"
                                      Title="上傳日期"
-                                     Options="{Binding DataContext.DateOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                     Option="{Binding DataContext.SelectedDate, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                     Options="{Binding DateOptions}"
+                                     Option="{Binding SelectedDate}" />
 
             <!-- 優先順序 -->
             <segmented:SegmentedView Grid.Column="3"
                                      Title="優先順序"
-                                     Options="{Binding DataContext.OrderOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                     Option="{Binding DataContext.SelectedOrder, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                     Options="{Binding OrderOptions}"
+                                     Option="{Binding SelectedOrder}" />
         </Grid>
     </ScrollViewer>
 

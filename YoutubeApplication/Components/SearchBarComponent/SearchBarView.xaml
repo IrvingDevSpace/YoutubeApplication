@@ -86,14 +86,14 @@
                          CaretBrush="Black">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter"
-                                    Command="{Binding SearchCommand}" />
+                                    Command="{Binding SearchCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                     </TextBox.InputBindings>
                 </TextBox>
             </Grid>
         </Border>
 
         <Button Grid.Column="1"
-                Command="{Binding SearchCommand}"
+                Command="{Binding SearchCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                 Width="64"
                 Height="40"
                 Cursor="Hand">

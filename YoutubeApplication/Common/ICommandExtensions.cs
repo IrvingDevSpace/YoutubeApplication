@@ -4,7 +4,7 @@ namespace YoutubeApplication.Common
 {
     internal static class ICommandExtensions
     {
-        public static async Task ExecuteAsync(this ICommand? command, object? parameter)
+        public static async Task ExecuteAsync(this ICommand? command, object? parameter = null)
         {
             if (command == null) return;
 

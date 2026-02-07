@@ -23,8 +23,8 @@
                     Margin="10"
                     HorizontalAlignment="Center">
 
-            <search:SearchBarView Keyword="{Binding DataContext.Keyword, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                  OnSearchCommand="{Binding DataContext.OnSearchCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+            <search:SearchBarView Keyword="{Binding Keyword}"
+                                  OnSearchCommand="{Binding OnSearchCommand}"
                                   Width="400" />
 
             <Button Content="篩選"
@@ -104,7 +104,7 @@
                Placement="Center"
                StaysOpen="False">
             <Border Width="420"
-                    Background="White"
+                    Background="GhostWhite"
                     CornerRadius="10"
                     Padding="12">
                 <Border.Effect>

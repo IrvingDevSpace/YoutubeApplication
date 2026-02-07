@@ -40,7 +40,6 @@ namespace YoutubeApplication.Views.Home
 
         public ICommand OpenSearchFilterCommand { get; }
         public ICommand CloseSearchFilterCommand { get; }
-
         public ICommand ApplySearchFilterCommand { get; }
 
         public HomeViewModel(IHomePresenter presenter)

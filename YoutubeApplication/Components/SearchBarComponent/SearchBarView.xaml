@@ -59,7 +59,7 @@
                             <Style.Triggers>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding Keyword}"
+                                        <Condition Binding="{Binding Keyword, UpdateSourceTrigger=PropertyChanged}"
                                                    Value="" />
                                         <Condition Binding="{Binding IsFocused, ElementName=SearchInput}"
                                                    Value="False" />
@@ -78,7 +78,7 @@
                 </TextBlock>
 
                 <TextBox x:Name="SearchInput"
-                         Text="{Binding Keyword, UpdateSourceTrigger=PropertyChanged}"
+                         Text="{Binding Keyword}"
                          BorderThickness="0"
                          Background="Transparent"
                          VerticalContentAlignment="Center"

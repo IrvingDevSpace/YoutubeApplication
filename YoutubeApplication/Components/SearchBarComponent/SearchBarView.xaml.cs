@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using YoutubeApplication.Common;
 
 namespace YoutubeApplication.Components.SearchBarComponent
 {
@@ -9,14 +10,13 @@ namespace YoutubeApplication.Components.SearchBarComponent
     /// </summary>
     public partial class SearchBarView : UserControl
     {
-        private readonly SearchBarViewModel _vm = new();
-
         public SearchBarView()
         {
             InitializeComponent();
-            DataContext = _vm;
 
-            _vm.OnKeywordChange += (keyword) => Keyword = keyword;
+            SearchCommand = new AsyncRelayCommand(
+                execute: ExecuteSearch, canExecute: CanExecuteSearch
+            );
         }
 
         public string Keyword
@@ -27,7 +27,16 @@ namespace YoutubeApplication.Components.SearchBarComponent
 
         public static readonly DependencyProperty KeywordProperty =
             DependencyProperty.Register(nameof(Keyword), typeof(string), typeof(SearchBarView),
-                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+                new FrameworkPropertyMetadata(""));
+
+        public bool IsSearching
+        {
+            get => (bool)GetValue(IsSearchingProperty);
+            set => SetValue(IsSearchingProperty, value);
+        }
+
+        public static readonly DependencyProperty IsSearchingProperty =
+            DependencyProperty.Register(nameof(IsSearching), typeof(bool), typeof(SearchBarView), new PropertyMetadata(false));
 
         public ICommand OnSearchCommand
         {
@@ -35,28 +44,32 @@ namespace YoutubeApplication.Components.SearchBarComponent
             set { SetValue(OnSearchCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty OnSearchCommandProperty =
+        public readonly DependencyProperty OnSearchCommandProperty =
             DependencyProperty.Register(nameof(OnSearchCommand), typeof(ICommand), typeof(SearchBarView),
-                 new PropertyMetadata((d, e) => ((SearchBarView)d)._vm.ExternalSearchCommand = (ICommand)e.NewValue));
+                 new PropertyMetadata((d, e) => ((SearchBarView)d).OnSearchCommand = (ICommand)e.NewValue));
 
-        //public Func<string, Task>? OnSearchAsync
-        //{
-        //    get => (Func<string, Task>?)GetValue(OnSearchAsyncProperty);
-        //    set => SetValue(OnSearchAsyncProperty, value);
-        //}
+        public ICommand SearchCommand { get; }
 
-        //public static readonly DependencyProperty OnSearchAsyncProperty =
-        //    DependencyProperty.Register(
-        //        nameof(OnSearchAsync),
-        //        typeof(Func<string, Task>),
-        //        typeof(SearchBarView),
-        //        new PropertyMetadata(null, OnSearchChanged)
-        //    );
+        private bool CanExecuteSearch()
+        {
+            return !string.IsNullOrWhiteSpace(Keyword) &&
+                   !IsSearching &&
+                   (OnSearchCommand?.CanExecute(Keyword) ?? true);
+        }
 
-        //private static void OnSearchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    var view = (SearchBarView)d;
-        //    view._vm.ExternalSearchAsync = (Func<string, Task>?)e.NewValue;
-        //}
+        private async Task ExecuteSearch()
+        {
+            if (IsSearching) return;
+
+            IsSearching = true;
+            try
+            {
+                await OnSearchCommand.ExecuteAsync(Keyword);
+            }
+            finally
+            {
+                IsSearching = false;
+            }
+        }
     }
 }

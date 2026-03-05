@@ -14,9 +14,9 @@ namespace YoutubeApplication.Views.Home
     {
         private readonly IHomePresenter _presenter;
 
-        private List<SearchItem> _allSearchItems = []; // 暫存所有原始資料
-
         public string Keyword { get; set; }
+
+        private List<SearchItem> _allSearchItems = []; // 暫存所有原始資料
 
         public int Total { get; set; }
 
@@ -47,7 +47,10 @@ namespace YoutubeApplication.Views.Home
         public HomeViewModel(IHomePresenter presenter)
         {
             _presenter = presenter;
-            OnSearchCommand = new AsyncRelayCommand(ExecuteSearchAsync);
+            OnSearchCommand = new AsyncRelayCommand(
+                ExecuteSearchAsync,
+                () => !string.IsNullOrWhiteSpace(Keyword) && !IsLoading
+            );
             OnPageIndexChangeCommand = new RelayCommand(UpdateDisplayCards);
             OnPageSizeChangeCommand = new RelayCommand(UpdateDisplayCards);
 
@@ -60,15 +63,11 @@ namespace YoutubeApplication.Views.Home
 
         private async Task ExecuteSearchAsync()
         {
-            if (string.IsNullOrWhiteSpace(Keyword)) return;
-            var req = Filter.GetSearchRequest(Keyword);
-
-            if (IsLoading) return;
-
-            IsLoading = true;
-
             try
             {
+                IsLoading = true;
+
+                var req = Filter.GetSearchRequest(Keyword);
                 Debug.WriteLine($"Total, {Total} {PageIndex} {PageSize}");
 
                 //await Task.Delay(10000);

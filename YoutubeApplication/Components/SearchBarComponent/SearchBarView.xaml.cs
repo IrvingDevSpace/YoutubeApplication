@@ -13,12 +13,14 @@ namespace YoutubeApplication.Components.SearchBarComponent
         public SearchBarView()
         {
             InitializeComponent();
-
-            SearchCommand = new AsyncRelayCommand(
-                execute: ExecuteSearch, canExecute: CanExecuteSearch
-            );
+            SearchCommand = new AsyncRelayCommand(ExecuteSearch, CanExecuteSearch);
         }
 
+        #region 外部 API (Dependency Properties)
+
+        /// <summary>
+        /// 搜尋關鍵字
+        /// </summary>
         public string Keyword
         {
             get => (string)GetValue(KeywordProperty);
@@ -26,9 +28,16 @@ namespace YoutubeApplication.Components.SearchBarComponent
         }
 
         public static readonly DependencyProperty KeywordProperty =
-            DependencyProperty.Register(nameof(Keyword), typeof(string), typeof(SearchBarView),
-               new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            DependencyProperty.Register(
+                nameof(Keyword),
+                typeof(string),
+                typeof(SearchBarView),
+                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
+            );
 
+        /// <summary>
+        /// 是否處於搜尋狀態
+        /// </summary>
         public bool IsSearching
         {
             get => (bool)GetValue(IsSearchingProperty);
@@ -36,9 +45,16 @@ namespace YoutubeApplication.Components.SearchBarComponent
         }
 
         public static readonly DependencyProperty IsSearchingProperty =
-            DependencyProperty.Register(nameof(IsSearching), typeof(bool), typeof(SearchBarView),
-                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            DependencyProperty.Register(
+                nameof(IsSearching),
+                typeof(bool),
+                typeof(SearchBarView),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
+            );
 
+        /// <summary>
+        /// 搜尋事件
+        /// </summary>
         public ICommand OnSearchCommand
         {
             get { return (ICommand)GetValue(OnSearchCommandProperty); }
@@ -46,8 +62,14 @@ namespace YoutubeApplication.Components.SearchBarComponent
         }
 
         public static readonly DependencyProperty OnSearchCommandProperty =
-            DependencyProperty.Register(nameof(OnSearchCommand), typeof(ICommand), typeof(SearchBarView),
-                 new PropertyMetadata((d, e) => ((SearchBarView)d).OnSearchCommand = (ICommand)e.NewValue));
+            DependencyProperty.Register(
+                nameof(OnSearchCommand),
+                typeof(ICommand),
+                typeof(SearchBarView),
+                new PropertyMetadata()
+            );
+
+        #endregion
 
         public ICommand SearchCommand { get; }
 

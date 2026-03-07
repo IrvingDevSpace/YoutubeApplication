@@ -11,7 +11,8 @@
             CornerRadius="12">
         <Border.InputBindings>
             <MouseBinding MouseAction="LeftClick"
-                          Command="{Binding OpenVideoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                          Command="{Binding ClickCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                          CommandParameter="{Binding VideoCard.VideoUrl, RelativeSource={RelativeSource AncestorType=UserControl}}" />
         </Border.InputBindings>
 
         <Border.Style>
@@ -62,13 +63,13 @@
                     CornerRadius="12"
                     Margin="0,0,0,12"
                     ClipToBounds="True">
-                <Image Source="{Binding ImgSrc, TargetNullValue={x:Null}}"
+                <Image Source="{Binding VideoCard.ImgSrc, TargetNullValue={x:Null}, RelativeSource={RelativeSource AncestorType=UserControl}}"
                        Stretch="UniformToFill"
                        RenderOptions.BitmapScalingMode="HighQuality" />
             </Border>
 
             <TextBlock Grid.Row="1"
-                       Text="{Binding Title}"
+                       Text="{Binding VideoCard.Title, RelativeSource={RelativeSource AncestorType=UserControl}}"
                        FontSize="16"
                        Foreground="#FFF1F1F1"
                        TextWrapping="Wrap"
@@ -76,12 +77,12 @@
                        TextTrimming="CharacterEllipsis" />
 
             <TextBlock Grid.Row="2"
-                       Text="{Binding ChannelName}"
+                       Text="{Binding VideoCard.ChannelName, RelativeSource={RelativeSource AncestorType=UserControl}}"
                        FontSize="14"
                        Foreground="#FFAAAAAA" />
 
             <TextBlock Grid.Row="3"
-                       Text="{Binding ViewSummary}"
+                       Text="{Binding VideoCard.ViewSummary, RelativeSource={RelativeSource AncestorType=UserControl}}"
                        FontSize="14"
                        Foreground="#FFAAAAAA" />
 

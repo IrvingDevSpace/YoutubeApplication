@@ -16,27 +16,38 @@ namespace YoutubeApplication.Views.Home
 
         public string Keyword { get; set; }
 
-        private List<SearchItem> _allSearchItems = []; // 暫存所有原始資料
-
-        public int Total { get; set; }
-
-        public int PageIndex { get; set; } = 1;
-
-        public int PageSize { get; set; } = 5;
-
-        public ICommand OnPageIndexChangeCommand { get; set; }
-
-        public ICommand OnPageSizeChangeCommand { get; set; }
-
-        public Category SearchCategory { get; set; } = Category.Video;
+        public ICommand OnSearchCommand { get; set; }
 
         public ObservableCollection<VideoCard> VideoCards { get; set; } = [];
 
-        public ICommand OnSearchCommand { get; set; }
+        public ICommand OnVideoCardClickCommand { get; set; }
+
+        public int CurrentPage { get; set; } = 1;
+
+        public int PageSize { get; set; } = 5;
+
+        public int Total { get; set; }
+
+        public ICommand OnPageChangeCommand { get; set; }
+
+        public ICommand OnPageSizeChangeCommand { get; set; }
+
+
+
+        private List<SearchItem> _allSearchItems = []; // 暫存所有原始資料
+
+
+
+
+
+
+        public Category SearchCategory { get; set; } = Category.Video;
+
+
+
 
         public bool IsSearchFilterOpen { get; set; }
 
-        public ICommand OnOpenVideoCommand { get; set; }
 
         public SearchFilterViewModel Filter { get; } = new SearchFilterViewModel();
 
@@ -47,14 +58,19 @@ namespace YoutubeApplication.Views.Home
         public HomeViewModel(IHomePresenter presenter)
         {
             _presenter = presenter;
+
             OnSearchCommand = new AsyncRelayCommand(
                 ExecuteSearchAsync,
                 () => !string.IsNullOrWhiteSpace(Keyword) && !IsLoading
             );
-            OnPageIndexChangeCommand = new RelayCommand(UpdateDisplayCards);
-            OnPageSizeChangeCommand = new RelayCommand(UpdateDisplayCards);
 
-            OnOpenVideoCommand = new RelayCommand<string>((url) => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }));
+            OnVideoCardClickCommand = new RelayCommand<string>(
+                url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }),
+                url => !string.IsNullOrWhiteSpace(url)
+            );
+
+            OnPageChangeCommand = new RelayCommand(UpdateDisplayCards);
+            OnPageSizeChangeCommand = new RelayCommand(UpdateDisplayCards);
 
             OpenSearchFilterCommand = new RelayCommand(() => IsSearchFilterOpen = true);
             CloseSearchFilterCommand = new RelayCommand(() => IsSearchFilterOpen = false);
@@ -68,7 +84,7 @@ namespace YoutubeApplication.Views.Home
                 IsLoading = true;
 
                 var req = Filter.GetSearchRequest(Keyword);
-                Debug.WriteLine($"Total, {Total} {PageIndex} {PageSize}");
+                Debug.WriteLine($"Total, {Total} {CurrentPage} {PageSize}");
 
                 //await Task.Delay(10000);
 
@@ -98,11 +114,11 @@ namespace YoutubeApplication.Views.Home
 
         private void UpdateDisplayCards()
         {
-            Debug.WriteLine($"UpdateDisplayCards, {Total} {PageIndex} {PageSize}");
+            Debug.WriteLine($"UpdateDisplayCards, {Total} {CurrentPage} {PageSize}");
 
             VideoCards.Clear();
 
-            int skip = (PageIndex - 1) * PageSize;
+            int skip = (CurrentPage - 1) * PageSize;
             var currentPageItems = _allSearchItems
                 .Skip(skip)
                 .Take(PageSize);

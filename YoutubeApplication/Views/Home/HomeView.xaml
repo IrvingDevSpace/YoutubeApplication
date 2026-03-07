@@ -72,7 +72,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <video:VideoCardView VideoCard="{Binding}"
-                                         OnOpenVideoCommand="{Binding DataContext.OnOpenVideoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                         OnClickCommand="{Binding DataContext.OnVideoCardClickCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                          Margin="8" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -100,11 +100,11 @@
                 </ProgressBar.Style>
             </ProgressBar>
         </Grid>
-        <pagination:PaginationView Total="{Binding DataContext.Total, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                   PageIndex="{Binding DataContext.PageIndex, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                   PageSize="{Binding DataContext.PageSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                   OnPageIndexChangeCommand="{Binding DataContext.OnPageIndexChangeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                   OnPageSizeChangeCommand="{Binding DataContext.OnPageSizeChangeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+        <pagination:PaginationView CurrentPage="{Binding CurrentPage}"
+                                   PageSize="{Binding PageSize}"
+                                   Total="{Binding Total}"
+                                   OnPageChangeCommand="{Binding OnPageChangeCommand}"
+                                   OnPageSizeChangeCommand="{Binding OnPageSizeChangeCommand}"
                                    Grid.Row="2"
                                    Margin="0,20" />
 

@@ -21,26 +21,38 @@ namespace YoutubeApplication.Components.SegmentedComponent
         }
 
         public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(SegmentedView),
-                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            DependencyProperty.Register(
+                nameof(Title),
+                typeof(string),
+                typeof(SegmentedView),
+                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
+            );
 
-        public IEnumerable Options
+        public IEnumerable<string> Options
         {
-            get => (IEnumerable)GetValue(OptionsProperty);
+            get => (IEnumerable<string>)GetValue(OptionsProperty);
             set => SetValue(OptionsProperty, value);
         }
         public static readonly DependencyProperty OptionsProperty =
-            DependencyProperty.Register(nameof(Options), typeof(IEnumerable), typeof(SegmentedView),
-                new PropertyMetadata(null));
+            DependencyProperty.Register(
+                nameof(Options),
+                typeof(IEnumerable),
+                typeof(SegmentedView),
+                new PropertyMetadata(null)
+            );
 
-        public object Option
+        public string Option
         {
-            get => GetValue(OptionProperty);
+            get => (string)GetValue(OptionProperty);
             set => SetValue(OptionProperty, value);
         }
 
         public static readonly DependencyProperty OptionProperty =
-            DependencyProperty.Register(nameof(Option), typeof(object), typeof(SegmentedView),
-                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+            DependencyProperty.Register(
+                nameof(Option),
+                typeof(string),
+                typeof(SegmentedView),
+                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
+            );
     }
 }

@@ -10,29 +10,48 @@ namespace YoutubeApplication.Views.Home
         public HomeView()
         {
             InitializeComponent();
-            InitializeAsync();
+            //InitializeWebView();
         }
 
-        async void InitializeAsync()
+        async void InitializeWebView()
         {
             //// 1. 確保初始化
-            //await webView.EnsureCoreWebView2Async();
+            //await myWebView.EnsureCoreWebView2Async();
 
-            //// 2. 解決 Error 153 的關鍵：對應一個虛擬資料夾路徑
-            //// 這樣 WebView2 會認為這是一個正常的網站環境
+            //// 2. 準備 HTML 內容 (嵌入 YouTube 的語法)
+            //string html = """
+            //    <!DOCTYPE html>
+            //    <html style='height:100%; margin:0;'>
+            //    <head>
+            //        <meta charset='utf-8' />
+            //        <style>
+            //            body { height:100%; margin:0; background:black; overflow:hidden; }
+            //            iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:0; }
+            //        </style>
+            //    </head>
+            //    <body>
+            //        <iframe src='https://www.youtube.com/embed/yzpMHLHEm6I' 
+            //                allow='autoplay; encrypted-media' allowfullscreen></iframe>
+            //    </body>
+            //    </html>";
+            //""";
+
+            //// 3. 建立暫存資料夾
             //string tempPath = Path.Combine(Path.GetTempPath(), "YoutubeDemo");
             //if (!Directory.Exists(tempPath)) Directory.CreateDirectory(tempPath);
 
-            //// 將 HTML 寫入暫存檔 (或是直接使用 NavigateToString 但對應虛擬主機)
+            //// 4. 將 HTML 寫入檔案
             //string fileName = "index.html";
             //File.WriteAllText(Path.Combine(tempPath, fileName), html, Encoding.UTF8);
 
-            //// 3. 設定虛擬主機名稱映射到暫存資料夾
-            //webView.CoreWebView2.SetVirtualHostNameToFolderMapping(
-            //    "youtube.local", tempPath, Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Allow);
+            //// 5. 設定虛擬主機映射 (這步最關鍵，解決 Error 153)
+            //myWebView.CoreWebView2.SetVirtualHostNameToFolderMapping(
+            //    "youtube.local",
+            //    tempPath,
+            //    Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Allow);
 
-            //// 4. 導向虛擬網址
-            //webView.Source = new Uri("https://youtube.local/index.html");
+            //// 6. 導向這個偽造的網址
+            //myWebView.Source = new Uri("https://youtube.local/index.html");
         }
     }
 }

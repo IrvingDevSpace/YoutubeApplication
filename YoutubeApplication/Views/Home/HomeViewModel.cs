@@ -33,27 +33,20 @@ namespace YoutubeApplication.Views.Home
         public ICommand OnPageSizeChangeCommand { get; set; }
 
 
-
         private List<SearchItem> _allSearchItems = []; // 暫存所有原始資料
 
-
-
-
-
-
+        // SearchFilter
         public Category SearchCategory { get; set; } = Category.Video;
 
-
-
-
         public bool IsSearchFilterOpen { get; set; }
-
 
         public SearchFilterViewModel Filter { get; } = new SearchFilterViewModel();
 
         public ICommand OpenSearchFilterCommand { get; }
         public ICommand CloseSearchFilterCommand { get; }
         public ICommand ApplySearchFilterCommand { get; }
+
+        public string CurrentVideoId { get; set; } = "yzpMHLHEm6I";
 
         public HomeViewModel(IHomePresenter presenter)
         {
@@ -74,7 +67,13 @@ namespace YoutubeApplication.Views.Home
 
             OpenSearchFilterCommand = new RelayCommand(() => IsSearchFilterOpen = true);
             CloseSearchFilterCommand = new RelayCommand(() => IsSearchFilterOpen = false);
-            ApplySearchFilterCommand = new AsyncRelayCommand(ExecuteSearchAsync);
+            ApplySearchFilterCommand = new AsyncRelayCommand(async () =>
+            {
+                if (!string.IsNullOrWhiteSpace(Keyword) && !IsLoading)
+                    await ExecuteSearchAsync();
+
+                IsSearchFilterOpen = false;
+            });
         }
 
         private async Task ExecuteSearchAsync()

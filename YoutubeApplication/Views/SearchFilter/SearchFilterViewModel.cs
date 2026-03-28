@@ -1,5 +1,7 @@
-﻿using YoutubeAPI.Enums.Search;
+﻿using System.Windows.Input;
+using YoutubeAPI.Enums.Search;
 using YoutubeAPI.Models.Search;
+using YoutubeApplication.Common;
 
 namespace YoutubeApplication.Views.SearchFilter
 {
@@ -58,6 +60,14 @@ namespace YoutubeApplication.Views.SearchFilter
         public List<string> OrderOptions { get; }
         public string SelectedOrder { get; set; }
 
+        public ICommand OnSubmit { get; set; } // 外部
+
+        public ICommand OnSubmitCommand { get; }
+
+        public ICommand OnClose { get; set; }  // 外部
+
+        public ICommand OnCloseCommand { get; }
+
         public SearchFilterViewModel()
         {
             TypeOptions = _typeMap.Keys.ToList();
@@ -69,18 +79,32 @@ namespace YoutubeApplication.Views.SearchFilter
             SelectedOrder = OrderOptions[0];
             SelectedDuration = DurationOptions[0];
             SelectedDate = DateOptions[0];
+
+            OnSubmitCommand = new AsyncRelayCommand(GetSearchReq);
+            OnCloseCommand = new AsyncRelayCommand(ExecuteClose);
         }
 
-        public YouTubeSearchReq GetSearchRequest(string keyword)
+        public async Task GetSearchReq()
         {
-            return new YouTubeSearchReq
+            var req = new YouTubeSearchReq
             {
-                Keyword = keyword,
                 Type = _typeMap[SelectedType],
                 Duration = _durationMap[SelectedDuration],
                 Date = _dateMap[SelectedDate],
                 Order = _orderMap[SelectedOrder]
             };
+
+            await OnSubmit.ExecuteAsync(req);
+        }
+
+        public async Task ExecuteClose()
+        {
+            await OnClose.ExecuteAsync();
+        }
+
+        public override void ApplyDataParams(object[] data)
+        {
+            throw new NotImplementedException();
         }
     }
 }

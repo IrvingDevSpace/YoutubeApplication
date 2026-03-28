@@ -30,7 +30,7 @@ namespace YoutubeApplication.Helpers
 
             if (webView.CoreWebView2 == null) return;
 
-            // 使用插值字串注入動態 videoId
+            // 注入 videoId
             string html = $$"""
                 <!DOCTYPE html>
                 <html style='height:100%; margin:0;'>

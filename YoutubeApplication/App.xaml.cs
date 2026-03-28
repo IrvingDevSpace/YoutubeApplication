@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using YoutubeApplication.Context;
+using YoutubeApplication.Navigation;
 using YoutubeApplication.Presenters;
 using YoutubeApplication.Views.Home;
 using YoutubeApplication.Views.Login;
@@ -11,10 +12,14 @@ namespace YoutubeApplication
     /// </summary>
     public partial class App : Application
     {
+        public static INavService NavService { get; set; }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
+            // App.NavService
+            // MainWindow.NavService
             var context = YoutubeContextProvider.Context;
 
             var mainVM = new MainWindowViewModel();

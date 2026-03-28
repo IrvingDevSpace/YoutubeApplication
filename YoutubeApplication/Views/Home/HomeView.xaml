@@ -5,8 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:YoutubeApplication.Views.Home"
              xmlns:search="clr-namespace:YoutubeApplication.Components.SearchBarComponent"
-             xmlns:video="clr-namespace:YoutubeApplication.Components.VideoCardComponent"
-             xmlns:pagination="clr-namespace:YoutubeApplication.Components.PaginationComponent"
              xmlns:filter="clr-namespace:YoutubeApplication.Views.SearchFilter"
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              xmlns:helpers="clr-namespace:YoutubeApplication.Helpers"
@@ -33,79 +31,14 @@
             <Button Content="篩選"
                     Margin="10,0,0,0"
                     Padding="12,6"
-                    Command="{Binding DataContext.OpenSearchFilterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    Command="{Binding OpenSearchFilterCommand}" />
         </StackPanel>
 
-        <ListBox Grid.Row="1"
-                 ItemsSource="{Binding VideoCards}"
-                 BorderThickness="0"
-                 Background="Transparent"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <Frame  Grid.Row="1"
+                x:Name="frame">
+        </Frame>
 
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Columns="5"
-                                 VerticalAlignment="Top" />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="VerticalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListBoxItem">
-                                <ContentPresenter />
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListBox.ItemContainerStyle>
-
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <video:VideoCardView VideoCard="{Binding}"
-                                         OnClickCommand="{Binding DataContext.OnVideoCardClickCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                         Margin="8" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
-        <Grid Grid.Row="1">
-
-            <ProgressBar IsIndeterminate="True"
-                         Width="200"
-                         Height="20"
-                         Margin="0,20,0,0"
-                         VerticalAlignment="Center">
-                <ProgressBar.Style>
-                    <Style TargetType="ProgressBar">
-                        <Setter Property="Visibility"
-                                Value="Hidden" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsLoading}"
-                                         Value="True">
-                                <Setter Property="Visibility"
-                                        Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ProgressBar.Style>
-            </ProgressBar>
-        </Grid>
-
-        <pagination:PaginationView Grid.Row="2"
-                                   CurrentPage="{Binding CurrentPage}"
-                                   PageSize="{Binding PageSize}"
-                                   Total="{Binding Total}"
-                                   OnPageChangeCommand="{Binding OnPageChangeCommand}"
-                                   OnPageSizeChangeCommand="{Binding OnPageSizeChangeCommand}"
-                                   Margin="0,20" />
-
-        <Popup IsOpen="True"
+        <Popup IsOpen="False"
                Placement="Center"
                StaysOpen="True"
                AllowsTransparency="True"
@@ -149,20 +82,8 @@
                                VerticalAlignment="Center" />
 
                     <filter:SearchFilterView Grid.Row="1"
-                                             DataContext="{Binding Filter}" />
-
-                    <StackPanel Grid.Row="2"
-                                Orientation="Horizontal"
-                                HorizontalAlignment="Right"
-                                Margin="0,10,0,0">
-                        <Button Content="套用"
-                                Padding="12,6"
-                                Margin="0,0,8,0"
-                                Command="{Binding ApplySearchFilterCommand}" />
-                        <Button Content="取消"
-                                Padding="12,6"
-                                Command="{Binding CloseSearchFilterCommand}" />
-                    </StackPanel>
+                                             OnSubmit="{Binding DataContext.OnSubmitCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                             OnClose="{Binding DataContext.CloseSearchFilterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                 </Grid>
             </Border>
         </Popup>

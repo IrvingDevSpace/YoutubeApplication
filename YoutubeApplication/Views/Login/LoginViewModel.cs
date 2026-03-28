@@ -36,5 +36,10 @@ namespace YoutubeApplication.Views.Login
 
             IsLoading = false;
         }
+
+        public override void ApplyDataParams(object[] data)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

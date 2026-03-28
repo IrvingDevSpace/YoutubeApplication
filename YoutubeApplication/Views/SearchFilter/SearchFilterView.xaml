@@ -10,37 +10,49 @@
              d:DesignWidth="800">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-            <!-- 類型 -->
-            <segmented:SegmentedView Grid.Column="0"
-                                     Title="類型"
-                                     Options="{Binding TypeOptions}"
-                                     Option="{Binding SelectedType}" />
+                <segmented:SegmentedView Grid.Column="0"
+                                         Title="類型"
+                                         Options="{Binding TypeOptions}"
+                                         Option="{Binding SelectedType}" />
+                <segmented:SegmentedView Grid.Column="1"
+                                         Title="片長"
+                                         Options="{Binding DurationOptions}"
+                                         Option="{Binding SelectedDuration}" />
+                <segmented:SegmentedView Grid.Column="2"
+                                         Title="上傳日期"
+                                         Options="{Binding DateOptions}"
+                                         Option="{Binding SelectedDate}" />
+                <segmented:SegmentedView Grid.Column="3"
+                                         Title="優先順序"
+                                         Options="{Binding OrderOptions}"
+                                         Option="{Binding SelectedOrder}" />
+            </Grid>
 
-            <!-- 片長 -->
-            <segmented:SegmentedView Grid.Column="1"
-                                     Title="片長"
-                                     Options="{Binding DurationOptions}"
-                                     Option="{Binding SelectedDuration}" />
-
-            <!-- 上傳日期 -->
-            <segmented:SegmentedView Grid.Column="2"
-                                     Title="上傳日期"
-                                     Options="{Binding DateOptions}"
-                                     Option="{Binding SelectedDate}" />
-
-            <!-- 優先順序 -->
-            <segmented:SegmentedView Grid.Column="3"
-                                     Title="優先順序"
-                                     Options="{Binding OrderOptions}"
-                                     Option="{Binding SelectedOrder}" />
+            <StackPanel Grid.Row="1"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,20,0,0">
+                <Button Content="套用"
+                        Padding="12,6"
+                        Margin="0,0,8,0"
+                        Command="{Binding OnSubmitCommand}" />
+                <Button Content="取消"
+                        Padding="12,6"
+                        Command="{Binding OnCloseCommand}" />
+            </StackPanel>
         </Grid>
     </ScrollViewer>
 

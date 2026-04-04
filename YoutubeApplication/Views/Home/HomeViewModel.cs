@@ -32,7 +32,7 @@ namespace YoutubeApplication.Views.Home
 
             OpenSearchFilterCommand = new RelayCommand(() => IsSearchFilterOpen = true);
 
-            OnSubmitCommand = new AsyncRelayCommand<YouTubeSearchReq>(async (req) =>
+            OnSubmitCommand = new RelayCommand<YouTubeSearchReq>(async (req) =>
             {
                 _searchReq = req;
                 if (!string.IsNullOrWhiteSpace(Keyword) && !IsLoading)

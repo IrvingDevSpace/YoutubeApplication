@@ -18,6 +18,8 @@ namespace YoutubeApplication
         {
             base.OnStartup(e);
 
+            NavService = new NavService();
+
             // App.NavService
             // MainWindow.NavService
             var context = YoutubeContextProvider.Context;

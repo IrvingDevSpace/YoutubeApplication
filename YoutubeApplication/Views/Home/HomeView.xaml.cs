@@ -1,5 +1,4 @@
 ﻿using System.Windows.Controls;
-using YoutubeApplication.Navigation;
 
 namespace YoutubeApplication.Views.Home
 {
@@ -12,7 +11,7 @@ namespace YoutubeApplication.Views.Home
         {
             InitializeComponent();
             //InitializeWebView();
-            App.NavService = new NavService(frame);
+            App.NavService.Frame = frame;
         }
 
         async void InitializeWebView()

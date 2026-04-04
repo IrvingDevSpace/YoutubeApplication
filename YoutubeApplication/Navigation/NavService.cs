@@ -5,15 +5,18 @@ namespace YoutubeApplication.Navigation
 {
     internal class NavService : INavService
     {
-        private readonly Frame _frame;
+        public Frame Frame { get; set; }
 
         private readonly Dictionary<string, Page> _pageByKey = new Dictionary<string, Page>();
 
         private readonly Dictionary<string, TypeInfo> _typeInfoByName;
 
-        public NavService(Frame frame)
+        private Page _currentPage;
+
+        private Page _prevPage;
+
+        public NavService()
         {
-            _frame = frame;
             _typeInfoByName = Assembly.GetExecutingAssembly().DefinedTypes
                 .Where(x => x.BaseType == typeof(Page))
                 .ToDictionary(x => x.Name);
@@ -37,7 +40,11 @@ namespace YoutubeApplication.Navigation
             if (page.DataContext is INavAware aware)
                 aware.ApplyDataParams(args);
 
-            _frame.Navigate(page);
+            if (_currentPage != null)
+                _prevPage = _currentPage;
+
+            _currentPage = page;
+            Frame.Navigate(page);
         }
     }
 }

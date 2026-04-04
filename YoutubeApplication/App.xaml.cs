@@ -20,33 +20,31 @@ namespace YoutubeApplication
 
             NavService = new NavService();
 
-            // App.NavService
-            // MainWindow.NavService
             var context = YoutubeContextProvider.Context;
-
-            var mainVM = new MainWindowViewModel();
+            var mainVm = new MainWindowViewModel();
 
             void GoToHome()
             {
-                var homePresenter = new HomePresenter(context);
-                mainVM.CurrentPage = new HomeViewModel(homePresenter);
-                mainVM.WindowTitle = "YouTube - 首頁";
+                var homeVm = new HomeViewModel();
+                mainVm.CurrentVm = homeVm;
+                mainVm.WindowTitle = "YouTube - 首頁";
             }
 
-            if (!context.Auth.IsLoggedIn())
+            if (context.Auth.IsLoggedIn())
+                GoToHome();
+            else
             {
                 var loginPresenter = new LoginPresenter(context);
-                var loginVM = new LoginViewModel(loginPresenter);
+                var loginVm = new LoginViewModel(loginPresenter);
 
-                loginVM.OnLoginSuccess += GoToHome;
+                loginVm.OnLoginSuccess += GoToHome;
 
-                mainVM.CurrentPage = loginVM;
-                mainVM.WindowTitle = "YouTube - 登入";
+                mainVm.CurrentVm = loginVm;
+                mainVm.WindowTitle = "YouTube - 登入";
             }
-            else
-                GoToHome();
 
-            var mainWindow = new MainWindow { DataContext = mainVM };
+
+            var mainWindow = new MainWindow { DataContext = mainVm };
             mainWindow.Show();
         }
     }

@@ -8,7 +8,7 @@
         xmlns:login="clr-namespace:YoutubeApplication.Views.Login"
         xmlns:home="clr-namespace:YoutubeApplication.Views.Home"
         Title="{Binding WindowTitle}"
-        Height="450"
+        Height="600"
         Width="700"
         WindowStartupLocation="CenterScreen">
 
@@ -22,7 +22,5 @@
         </DataTemplate>
     </Window.Resources>
 
-    <Grid>
-        <ContentControl Content="{Binding CurrentPage}" />
-    </Grid>
+    <ContentControl Content="{Binding CurrentVm}" />
 </Window>

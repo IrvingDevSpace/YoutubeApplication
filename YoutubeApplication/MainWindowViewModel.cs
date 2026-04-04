@@ -7,6 +7,6 @@ namespace YoutubeApplication
     {
         public string WindowTitle { get; set; } = "YouTube";
 
-        public object CurrentPage { get; set; }
+        public object CurrentVm { get; set; }
     }
 }

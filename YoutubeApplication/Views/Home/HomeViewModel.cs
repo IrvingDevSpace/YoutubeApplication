@@ -1,28 +1,26 @@
 ﻿using System.Windows.Input;
 using YoutubeAPI.Models.Search;
 using YoutubeApplication.Common;
-using YoutubeApplication.Presenters.Interfaces;
 
 namespace YoutubeApplication.Views.Home
 {
     public class HomeViewModel : BaseViewModel
     {
-
         public string Keyword { get; set; }
 
-        public ICommand OnSearchCommand { get; set; }
-
         private YouTubeSearchReq _searchReq { get; set; } = new YouTubeSearchReq();
+
+        public ICommand OnSearchCommand { get; set; }
 
         public bool IsSearchFilterOpen { get; set; }
 
         public ICommand OpenSearchFilterCommand { get; }
+
         public ICommand OnSubmitCommand { get; }
+
         public ICommand CloseSearchFilterCommand { get; }
 
-        public string CurrentVideoId { get; set; } = "yzpMHLHEm6I";
-
-        public HomeViewModel(IHomePresenter presenter)
+        public HomeViewModel()
         {
             //_navService = navService;
             OnSearchCommand = new AsyncRelayCommand(

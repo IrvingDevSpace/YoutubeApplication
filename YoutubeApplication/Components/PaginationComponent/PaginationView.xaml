@@ -4,11 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:YoutubeApplication.Components.PaginationComponent"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
-    <UserControl.Resources>
+    <!--<UserControl.Resources>
         <Style x:Key="PaginationButtonStyle"
                TargetType="Button">
             <Setter Property="MinWidth"
@@ -205,5 +206,56 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
+    </Grid>-->
+    <Grid HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          Background="{DynamicResource MaterialDesignPaper}">
+        <StackPanel Orientation="Horizontal">
+
+            <Button Style="{StaticResource MaterialDesignIconButton}"
+                    Command="{Binding PreviousPageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Foreground="{DynamicResource MaterialDesignBody}">
+                <materialDesign:PackIcon Kind="ChevronLeft" />
+            </Button>
+
+            <ListBox ItemsSource="{Binding Pages, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                     SelectedItem="{Binding CurrentPage, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                     Style="{StaticResource MaterialDesignChoiceChipPrimaryListBox}"
+                     BorderThickness="0"
+                     Background="Transparent">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding TargetNullValue='...'}"
+                                   VerticalAlignment="Center" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <Button Style="{StaticResource MaterialDesignIconButton}"
+                    Command="{Binding NextPageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Foreground="{DynamicResource MaterialDesignBody}">
+                <materialDesign:PackIcon Kind="ChevronRight" />
+            </Button>
+
+            <ComboBox Padding="20,0"
+                      Style="{StaticResource MaterialDesignComboBox}"
+                      materialDesign:HintAssist.Hint="每頁筆數"
+                      ItemsSource="{Binding PageSizes, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                      SelectedItem="{Binding PageSize, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding StringFormat={}{0} 筆 / 頁}"
+                                   Style="{StaticResource MaterialDesignTextBlock}"
+                                   Foreground="{DynamicResource MaterialDesignBody}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+        </StackPanel>
     </Grid>
 </UserControl>

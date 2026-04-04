@@ -4,14 +4,16 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:YoutubeApplication.Pages.VideoPage"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
       xmlns:helpers="clr-namespace:YoutubeApplication.Helpers"
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800"
-      Title="VideoPage">
+      Title="VideoPage"
+      Background="{DynamicResource MaterialDesignPaper}">
 
-    <Border Background="Black"
+    <!--<Border Background="Black"
             Width="640"
             Height="360"
             CornerRadius="8">
@@ -20,5 +22,167 @@
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch" />
         </Grid>
-    </Border>
+    </Border>-->
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="8*" />
+                <ColumnDefinition Width="24" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <materialDesign:Card Grid.Row="0"
+                                     materialDesign:ElevationAssist.Elevation="Dp8"
+                                     UniformCornerRadius="12"
+                                     Margin="0,0,0,16"
+                                     Background="Black"
+                                     ClipToBounds="True">
+                    <Grid x:Name="VideoContainer">
+                        <Border x:Name="RatioKeeper"
+                                Background="Transparent">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="MinWidth"
+                                            Value="640" />
+                                    <Setter Property="MinHeight"
+                                            Value="360" />
+                                </Style>
+                            </Border.Style>
+                        </Border>
+
+                        <Viewbox Stretch="Uniform">
+                            <Grid Width="1280"
+                                  Height="720">
+                                <wv2:WebView2 helpers:WebView2Helper.BindableSource="{Binding VideoId}" />
+                            </Grid>
+                        </Viewbox>
+                    </Grid>
+                </materialDesign:Card>
+
+                <StackPanel Grid.Row="1">
+                    <TextBlock Text="【台灣囝仔拼日職】#林安可 穩坐西武中心棒次 連續7場有安打 2026.04.04 埼玉西武獅vs 東北樂天金鷲"
+                               Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource MaterialDesignBody}"
+                               TextWrapping="Wrap"
+                               LineHeight="28"
+                               Margin="0,0,0,12" />
+
+                    <Grid Margin="0,0,0,24">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center">
+                            <Border Width="40"
+                                    Height="40"
+                                    Background="#33FFFFFF"
+                                    CornerRadius="20"
+                                    Margin="0,0,12,0" />
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="DAZN Taiwan"
+                                           Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                           FontWeight="Bold"
+                                           Foreground="{DynamicResource MaterialDesignBody}" />
+                                <TextBlock Text="13.3萬位訂閱者"
+                                           Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                           Foreground="{DynamicResource MaterialDesignBodyLight}" />
+                            </StackPanel>
+                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                    Content="訂閱"
+                                    Foreground="White"
+                                    Background="#11FFFFFF"
+                                    Margin="24,0,0,0"
+                                    Padding="16,4"
+                                    materialDesign:ButtonAssist.CornerRadius="16" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2"
+                                    Orientation="Horizontal">
+                            <Border Background="#11FFFFFF"
+                                    CornerRadius="16"
+                                    Height="36"
+                                    Margin="0,0,8,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                            Foreground="White"
+                                            Padding="12,4">
+                                        <StackPanel Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="ThumbUpOutline"
+                                                                     Width="18"
+                                                                     Height="18"
+                                                                     Margin="0,0,8,0" />
+                                            <TextBlock Text="1044"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button>
+                                    <Border Width="1"
+                                            Background="#33FFFFFF"
+                                            Margin="0,6" />
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                            Foreground="White"
+                                            Padding="12,4">
+                                        <materialDesign:PackIcon Kind="ThumbDownOutline"
+                                                                 Width="18"
+                                                                 Height="18" />
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+                            <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                    Height="36"
+                                    Foreground="White"
+                                    Background="#11FFFFFF"
+                                    Margin="0,0,8,0"
+                                    Padding="12,4"
+                                    materialDesign:ButtonAssist.CornerRadius="18">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="ShareOutline"
+                                                             Width="18"
+                                                             Height="18"
+                                                             Margin="0,0,8,0" />
+                                    <TextBlock Text="分享"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource MaterialDesignIconButton}"
+                                    Foreground="White"
+                                    Background="#11FFFFFF"
+                                    Width="36"
+                                    Height="36">
+                                <materialDesign:PackIcon Kind="DotsHorizontal" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <materialDesign:Card materialDesign:ElevationAssist.Elevation="Dp2"
+                                         UniformCornerRadius="12"
+                                         Background="#11FFFFFF"
+                                         Padding="16"
+                                         Margin="0,0,0,24">
+                        <TextBlock Text="詳情與評論預留區..."
+                                   Foreground="{DynamicResource MaterialDesignBodyLight}" />
+                    </materialDesign:Card>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="接下來播放"
+                           Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                           Foreground="{DynamicResource MaterialDesignBody}"
+                           Margin="0,0,0,16" />
+                <TextBlock Text="[相關影片清單ListBox]"
+                           Foreground="{DynamicResource MaterialDesignBodyLight}" />
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </Page>

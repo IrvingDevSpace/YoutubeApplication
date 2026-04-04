@@ -42,12 +42,12 @@
         </Grid>
 
         <materialDesign:DialogHost IsOpen="{Binding IsSearchFilterOpen}"
-                                   CloseOnClickAway="True">
+                                   >
             <materialDesign:DialogHost.DialogContent>
                 <materialDesign:Card Padding="20"
                                      UniformCornerRadius="12"
                                      materialDesign:ElevationAssist.Elevation="Dp8"
-                                     Background="White">
+                                     Background="{DynamicResource MaterialDesignPaper}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />

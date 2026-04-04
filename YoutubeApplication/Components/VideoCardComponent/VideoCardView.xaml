@@ -4,92 +4,73 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:YoutubeApplication.Components.VideoCardComponent"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
-    <Border Padding="12"
-            CornerRadius="12">
-        <Border.InputBindings>
-            <MouseBinding MouseAction="LeftClick"
-                          Command="{Binding ClickCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                          CommandParameter="{Binding VideoCard.VideoUrl, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-        </Border.InputBindings>
+    
+    <materialDesign:Card materialDesign:ElevationAssist.Elevation="Dp2"
+                         UniformCornerRadius="12"
+                         Background="{DynamicResource MaterialDesignPaper}">
 
-        <Border.Style>
-            <Style TargetType="Border">
-                <Setter Property="Background"
-                        Value="#FF0F0F0F" />
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver"
-                             Value="True">
-                        <Setter Property="Background"
-                                Value="#2E1F18" />
-                        <Setter Property="Cursor"
-                                Value="Hand" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </Border.Style>
+        <Button Command="{Binding ClickCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                CommandParameter="{Binding VideoCard.VideoUrl, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                Style="{StaticResource MaterialDesignFlatButton}"
+                Padding="0"
+                Height="Auto"
+                Foreground="{DynamicResource MaterialDesignBody}">
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+            <Border Padding="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-            <!--<Border Grid.Row="0"
-                    CornerRadius="12"
-                    Margin="0,0,0,12">
-                <Border.Background>
-                    <ImageBrush ImageSource="{Binding VideoCard.ImgSrc}"
-                                Stretch="UniformToFill" />
-                </Border.Background>
+                    <Border Grid.Row="0"
+                            CornerRadius="8"
+                            ClipToBounds="True"
+                            Margin="0,0,0,4">
+                        <Grid>
+                            <Image Source="{Binding VideoCard.ImgSrc, TargetNullValue={x:Null}, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                   Stretch="UniformToFill"
+                                   RenderOptions.BitmapScalingMode="HighQuality" />
 
-                -->
-            <!--<Grid x:Name="OverlayLayer">
-                <Border Background="#CC000000" CornerRadius="4" 
-                        HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                        Padding="4,2" Margin="8">
-                    <TextBlock Text="10:24" Foreground="White" FontSize="10" FontWeight="Bold"/>
-                </Border>
-            </Grid>-->
-            <!--
-            </Border>-->
+                            <!--<Border Background="#CC000000"
+                                    CornerRadius="4"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Padding="4,2"
+                                    Margin="8">
+                                <TextBlock Text="10:24"
+                                           Foreground="White"
+                                           FontSize="11"
+                                           FontWeight="Medium" />
+                            </Border>-->
+                        </Grid>
+                    </Border>
 
-            <Border Grid.Row="0"
-                    CornerRadius="12"
-                    Margin="0,0,0,12"
-                    ClipToBounds="True">
-                <Image Source="{Binding VideoCard.ImgSrc, TargetNullValue={x:Null}, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                       Stretch="UniformToFill"
-                       RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Grid.Row="1"
+                               Text="{Binding VideoCard.Title, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"
+                               FontWeight="SemiBold"
+                               TextWrapping="Wrap"
+                               MaxHeight="50"
+                               TextTrimming="CharacterEllipsis"
+                               HorizontalAlignment="Left" />
+
+                    <StackPanel Grid.Row="2"
+                                HorizontalAlignment="Left">
+                        <TextBlock Text="{Binding VideoCard.ChannelName, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                   FontSize="13"
+                                   Foreground="{DynamicResource MaterialDesignBodyLight}" />
+                        <TextBlock Text="{Binding VideoCard.ViewSummary, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource MaterialDesignBodyLight}" />
+                    </StackPanel>
+                </Grid>
             </Border>
-
-            <TextBlock Grid.Row="1"
-                       Text="{Binding VideoCard.Title, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                       FontSize="16"
-                       Foreground="#FFF1F1F1"
-                       TextWrapping="Wrap"
-                       MaxHeight="45"
-                       TextTrimming="CharacterEllipsis" />
-
-            <TextBlock Grid.Row="2"
-                       Text="{Binding VideoCard.ChannelName, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                       FontSize="14"
-                       Foreground="#FFAAAAAA" />
-
-            <TextBlock Grid.Row="3"
-                       Text="{Binding VideoCard.ViewSummary, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                       FontSize="14"
-                       Foreground="#FFAAAAAA" />
-
-            <TextBlock Grid.Row="4"
-                       Text="頻道精選預留"
-                       FontSize="10"
-                       Foreground="#FFAAAAAA" />
-        </Grid>
-    </Border>
+        </Button>
+    </materialDesign:Card>
 </UserControl>

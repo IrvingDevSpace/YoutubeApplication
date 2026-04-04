@@ -47,11 +47,23 @@ namespace YoutubeApplication.Helpers
 
             // 這裡的重點是加入了一段 JS，用來接收網址列的參數
             string html = $$"""
-                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/{{videoId}}"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        * { margin: 0; padding: 0; overflow: hidden; }
+                        html, body { width: 100%; height: 100%; background-color: black; }
+                        iframe { width: 100%; height: 100%; border: none; }
+                    </style>
+                </head>
+                <body>
+                    <iframe src="https://www.youtube.com/embed/{{videoId}}?autoplay=1"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            allowfullscreen>
                     </iframe>
+                </body>
+                </html>
                 """;
 
 

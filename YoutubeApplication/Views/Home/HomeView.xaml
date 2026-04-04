@@ -44,8 +44,7 @@
         <materialDesign:DialogHost IsOpen="{Binding IsSearchFilterOpen}"
                                    CloseOnClickAway="True">
             <materialDesign:DialogHost.DialogContent>
-                <materialDesign:Card Width="420"
-                                     Padding="20"
+                <materialDesign:Card Padding="20"
                                      UniformCornerRadius="12"
                                      materialDesign:ElevationAssist.Elevation="Dp8"
                                      Background="White">

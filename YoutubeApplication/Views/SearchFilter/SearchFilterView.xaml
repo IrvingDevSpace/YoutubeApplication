@@ -4,37 +4,42 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:YoutubeApplication.Views.SearchFilter"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:segmented="clr-namespace:YoutubeApplication.Components.SegmentedComponent"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="10">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
+
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="120" />
                 </Grid.ColumnDefinitions>
 
                 <segmented:SegmentedView Grid.Column="0"
                                          Title="類型"
                                          Options="{Binding TypeOptions}"
                                          Option="{Binding SelectedType}" />
+
                 <segmented:SegmentedView Grid.Column="1"
                                          Title="片長"
                                          Options="{Binding DurationOptions}"
                                          Option="{Binding SelectedDuration}" />
+
                 <segmented:SegmentedView Grid.Column="2"
                                          Title="上傳日期"
                                          Options="{Binding DateOptions}"
                                          Option="{Binding SelectedDate}" />
+
                 <segmented:SegmentedView Grid.Column="3"
                                          Title="優先順序"
                                          Options="{Binding OrderOptions}"
@@ -44,14 +49,17 @@
             <StackPanel Grid.Row="1"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
-                        Margin="0,20,0,0">
-                <Button Content="套用"
-                        Padding="12,6"
-                        Margin="0,0,8,0"
-                        Command="{Binding OnSubmitCommand}" />
+                        Margin="0,32,0,0">
+
                 <Button Content="取消"
-                        Padding="12,6"
-                        Command="{Binding OnCloseCommand}" />
+                        Style="{StaticResource MaterialDesignFlatButton}"
+                        Foreground="{DynamicResource MaterialDesignBody}"
+                        Command="{Binding OnCloseCommand}"
+                        Margin="0,0,8,0" />
+
+                <Button Content="套用"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Command="{Binding OnSubmitCommand}" />
             </StackPanel>
         </Grid>
     </ScrollViewer>

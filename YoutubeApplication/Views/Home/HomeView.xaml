@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:YoutubeApplication.Views.Home"
              xmlns:search="clr-namespace:YoutubeApplication.Components.SearchBarComponent"
              xmlns:filter="clr-namespace:YoutubeApplication.Views.SearchFilter"
@@ -11,81 +12,70 @@
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
+
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0"
-                    Orientation="Horizontal"
-                    Margin="10"
-                    HorizontalAlignment="Center">
+            <StackPanel Grid.Row="0"
+                        Orientation="Horizontal"
+                        Margin="10"
+                        HorizontalAlignment="Center">
 
-            <search:SearchBarView Keyword="{Binding Keyword}"
-                                  IsSearching="{Binding IsLoading}"
-                                  OnSearchCommand="{Binding OnSearchCommand}"
-                                  Width="400" />
+                <search:SearchBarView Keyword="{Binding Keyword}"
+                                      IsSearching="{Binding IsLoading}"
+                                      OnSearchCommand="{Binding OnSearchCommand}"
+                                      Width="400" />
 
-            <Button Content="篩選"
-                    Margin="10,0,0,0"
-                    Padding="12,6"
-                    Command="{Binding OpenSearchFilterCommand}" />
-        </StackPanel>
+                <Button Margin="10,0,0,0"
+                        Content="篩選"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Command="{Binding OpenSearchFilterCommand}" />
+            </StackPanel>
 
-        <Frame  Grid.Row="1"
-                x:Name="frame">
-        </Frame>
+            <Frame  Grid.Row="1"
+                    x:Name="frame">
+            </Frame>
+        </Grid>
 
-        <Popup IsOpen="False"
-               Placement="Center"
-               StaysOpen="True"
-               AllowsTransparency="True"
-               Focusable="True">
-            <Border Background="Black"
-                    Width="640"
-                    Height="360"
-                    CornerRadius="8">
-                <Grid>
-                    <wv2:WebView2 helpers:WebView2Helper.BindableSource="{Binding CurrentVideoId}"
-                                  HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch" />
-                </Grid>
-            </Border>
-        </Popup>
+        <materialDesign:DialogHost IsOpen="{Binding IsSearchFilterOpen}"
+                                   CloseOnClickAway="True">
+            <materialDesign:DialogHost.DialogContent>
+                <materialDesign:Card Width="420"
+                                     Padding="20"
+                                     UniformCornerRadius="12"
+                                     materialDesign:ElevationAssist.Elevation="Dp8"
+                                     Background="White">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-        <Popup IsOpen="{Binding IsSearchFilterOpen}"
-               Placement="Center"
-               StaysOpen="False">
-            <Border Width="420"
-                    Background="GhostWhite"
-                    CornerRadius="10"
-                    Padding="12">
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="18"
-                                      ShadowDepth="2"
-                                      Opacity="0.25" />
-                </Border.Effect>
+                        <StackPanel Grid.Row="0"
+                                    Orientation="Horizontal"
+                                    Margin="0,0,0,16">
+                            <materialDesign:PackIcon Kind="FilterVariant"
+                                                     VerticalAlignment="Center"
+                                                     Width="20"
+                                                     Height="20"
+                                                     Foreground="{DynamicResource PrimaryHueMidBrush}" />
+                            <TextBlock Text="搜尋篩選"
+                                       Margin="10,0,0,0"
+                                       Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Grid.Row="0"
-                               Text="搜尋篩選"
-                               FontWeight="Bold"
-                               FontSize="16"
-                               VerticalAlignment="Center" />
-
-                    <filter:SearchFilterView Grid.Row="1"
-                                             OnSubmit="{Binding DataContext.OnSubmitCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                             OnClose="{Binding DataContext.CloseSearchFilterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                </Grid>
-            </Border>
-        </Popup>
+                        <filter:SearchFilterView Grid.Row="1"
+                                                 OnSubmit="{Binding DataContext.OnSubmitCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                 OnClose="{Binding DataContext.CloseSearchFilterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    </Grid>
+                </materialDesign:Card>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
     </Grid>
 </UserControl>

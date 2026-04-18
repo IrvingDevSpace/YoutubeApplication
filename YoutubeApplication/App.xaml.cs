@@ -14,7 +14,7 @@ namespace YoutubeApplication
     {
         public static INavService NavService { get; set; }
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 

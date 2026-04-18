@@ -1,0 +1,190 @@
+﻿<UserControl
+    x:Class="YoutubeApplication.Components.CommentComponent.CommentThreadView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:YoutubeApplication.Components.CommentComponent"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid>
+        <StackPanel Margin="0,0,0,20">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Ellipse
+                    Width="40"
+                    Height="40"
+                    Margin="0,0,15,0"
+                    VerticalAlignment="Top">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{Binding CommentThread.TopLevelComment.ProfileImageUrl, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    </Ellipse.Fill>
+                </Ellipse>
+
+                <StackPanel Grid.Column="1">
+                    <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+                        <TextBlock
+                            Margin="0,0,10,0"
+                            FontWeight="Bold"
+                            Text="{Binding CommentThread.TopLevelComment.AuthorName, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Foreground="{DynamicResource MaterialDesignBodyLight}">
+                            <Run Text="{Binding CommentThread.TopLevelComment.UpdatedAt, Converter={StaticResource RelativeTimeConverter}, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                        </TextBlock>
+
+                    </StackPanel>
+
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        LineHeight="20"
+                        Text="{Binding CommentThread.TopLevelComment.Text, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        TextWrapping="Wrap" />
+
+                    <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+                        <Button
+                            Width="30"
+                            Height="30"
+                            Padding="0"
+                            Style="{StaticResource MaterialDesignToolButton}">
+                            <materialDesign:PackIcon Width="18" Height="18">
+
+                                <materialDesign:PackIcon.Style>
+                                    <Style TargetType="materialDesign:PackIcon">
+                                        <Setter Property="Kind" Value="ThumbUpOutline" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CommentThread.TopLevelComment.UserRating, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Like">
+                                                <Setter Property="Kind" Value="ThumbUp" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </materialDesign:PackIcon.Style>
+                            </materialDesign:PackIcon>
+                        </Button>
+                        <TextBlock
+                            Margin="5,0,15,0"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Foreground="{DynamicResource MaterialDesignBodyLight}"
+                            Text="{Binding CommentThread.TopLevelComment.LikeCount, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+
+                        <Button
+                            Width="30"
+                            Height="30"
+                            Padding="0"
+                            Style="{StaticResource MaterialDesignToolButton}">
+                            <materialDesign:PackIcon Width="18" Height="18">
+                                <materialDesign:PackIcon.Style>
+                                    <Style TargetType="materialDesign:PackIcon">
+                                        <Setter Property="Kind" Value="ThumbDownOutline" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CommentThread.TopLevelComment.UserRating, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Dislike">
+                                                <Setter Property="Kind" Value="ThumbDown" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </materialDesign:PackIcon.Style>
+                            </materialDesign:PackIcon>
+                        </Button>
+
+                        <Button
+                            Height="30"
+                            Margin="15,0,0,0"
+                            Content="回覆"
+                            FontSize="12"
+                            Style="{StaticResource MaterialDesignFlatButton}" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding CommentThread.Replies, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border
+                            Margin="20,0,0,15"
+                            Padding="35,0,0,0"
+                            BorderBrush="{DynamicResource MaterialDesignDivider}"
+                            BorderThickness="1,0,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Ellipse
+                                    Width="24"
+                                    Height="24"
+                                    Margin="0,0,10,0"
+                                    VerticalAlignment="Top">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{Binding ProfileImageUrl}" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+
+                                <StackPanel Grid.Column="1">
+                                    <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+                                        <TextBlock
+                                            Margin="0,0,10,0"
+                                            FontSize="13"
+                                            FontWeight="SemiBold"
+                                            Text="{Binding AuthorName}" />
+                                        <TextBlock
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            Foreground="{DynamicResource MaterialDesignBodyLight}">
+                                            <Run Text="{Binding UpdatedAt, Converter={StaticResource RelativeTimeConverter}}" />
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <TextBlock
+                                        Margin="0,0,0,5"
+                                        LineHeight="20"
+                                        Text="{Binding Text}"
+                                        TextWrapping="Wrap" />
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button
+                                            Width="25"
+                                            Height="25"
+                                            Padding="0"
+                                            Style="{StaticResource MaterialDesignToolButton}">
+                                            <materialDesign:PackIcon
+                                                Width="15"
+                                                Height="15"
+                                                Kind="ThumbUpOutline" />
+                                        </Button>
+                                        <TextBlock
+                                            Margin="5,0,15,0"
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                            Text="{Binding LikeCount}" />
+                                        <Button
+                                            Width="25"
+                                            Height="25"
+                                            Padding="0"
+                                            Style="{StaticResource MaterialDesignToolButton}">
+                                            <materialDesign:PackIcon
+                                                Width="15"
+                                                Height="15"
+                                                Kind="ThumbDownOutline" />
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

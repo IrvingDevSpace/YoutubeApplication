@@ -79,7 +79,7 @@ namespace YoutubeApplication.Views.Home
             }
         }
 
-        public override void ApplyDataParams(object[] data)
+        public override void ApplyDataParamsAsync(object[] data)
         {
             throw new NotImplementedException();
         }

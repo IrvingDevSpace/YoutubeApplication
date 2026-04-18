@@ -38,10 +38,8 @@ namespace YoutubeApplication.Pages.VideoSearchPage
         {
             _presenter = new VideoSearchPagePresenter(YoutubeContextProvider.Context);
 
-            OnVideoCardClickCommand = new RelayCommand<string>(
-               //url => Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }),
-               url => App.NavService.Navigate("VideoPage", url),
-               url => !string.IsNullOrWhiteSpace(url)
+            OnVideoCardClickCommand = new RelayCommand<VideoCard>(
+               videoCard => App.NavService.Navigate("VideoPage", videoCard)
             );
 
             OnPageChangeCommand = new RelayCommand(UpdateDisplayCards);
@@ -67,8 +65,9 @@ namespace YoutubeApplication.Pages.VideoSearchPage
                 {
                     Title = snippet.Title,
                     //VideoUrl = $"https://www.youtube.com/watch?v={item.Id.VideoId}",
-                    VideoUrl = item.Id.VideoId,
+                    VideoId = item.Id.VideoId,
                     ImgSrc = snippet.Thumbnails.High.Url,
+                    ChannelId = snippet.ChannelId,
                     ChannelName = snippet.ChannelTitle,
                     Views = new Random().Next(1000, 1000000),
                     PublishedAt = snippet.PublishedAt
@@ -78,7 +77,7 @@ namespace YoutubeApplication.Pages.VideoSearchPage
             }
         }
 
-        public override async void ApplyDataParams(object[] data)
+        public override async void ApplyDataParamsAsync(object[] data)
         {
             //Debug.WriteLine($"Total, {Total} {CurrentPage} {PageSize}");
 

@@ -14,7 +14,7 @@
                          Background="{DynamicResource MaterialDesignPaper}">
 
         <Button Command="{Binding ClickCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                CommandParameter="{Binding VideoCard.VideoUrl, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                CommandParameter="{Binding VideoCard, RelativeSource={RelativeSource AncestorType=UserControl}}"
                 Style="{StaticResource MaterialDesignFlatButton}"
                 Padding="0"
                 Height="Auto"

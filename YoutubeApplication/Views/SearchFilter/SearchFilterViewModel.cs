@@ -102,7 +102,7 @@ namespace YoutubeApplication.Views.SearchFilter
             await OnClose.ExecuteAsync();
         }
 
-        public override void ApplyDataParams(object[] data)
+        public override void ApplyDataParamsAsync(object[] data)
         {
             throw new NotImplementedException();
         }

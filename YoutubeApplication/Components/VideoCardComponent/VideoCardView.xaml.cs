@@ -14,9 +14,8 @@ namespace YoutubeApplication.Components.VideoCardComponent
         {
             InitializeComponent();
 
-            ClickCommand = new AsyncRelayCommand<string>(
-                ExecuteClickAsync,
-                videoUrl => !string.IsNullOrEmpty(videoUrl)
+            ClickCommand = new AsyncRelayCommand<VideoCard>(
+                ExecuteClickAsync
             );
         }
 
@@ -57,9 +56,9 @@ namespace YoutubeApplication.Components.VideoCardComponent
 
         public ICommand ClickCommand { get; }
 
-        private async Task ExecuteClickAsync(string url)
+        private async Task ExecuteClickAsync(VideoCard videoCard)
         {
-            await OnClickCommand.ExecuteAsync(url);
+            await OnClickCommand.ExecuteAsync(videoCard);
         }
     }
 }

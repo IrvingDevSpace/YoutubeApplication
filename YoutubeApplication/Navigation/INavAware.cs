@@ -2,6 +2,6 @@
 {
     internal interface INavAware
     {
-        void ApplyDataParams(object[] data);
+        void ApplyDataParamsAsync(object[] data);
     }
 }

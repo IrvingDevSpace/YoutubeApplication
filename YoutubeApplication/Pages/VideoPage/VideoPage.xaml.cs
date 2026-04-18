@@ -1,4 +1,6 @@
 ﻿using System.Windows.Controls;
+using YoutubeApplication.Context;
+using YoutubeApplication.Presenters;
 
 namespace YoutubeApplication.Pages.VideoPage
 {
@@ -10,7 +12,7 @@ namespace YoutubeApplication.Pages.VideoPage
         public VideoPage()
         {
             InitializeComponent();
-            DataContext = new VideoPageViewModel();
+            DataContext = new VideoPageViewModel(new VideoPagePresenter(YoutubeContextProvider.Context));
         }
     }
 }

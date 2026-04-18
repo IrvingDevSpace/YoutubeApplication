@@ -8,6 +8,6 @@ namespace YoutubeApplication.Views
     {
         public bool IsLoading { get; set; } = false;
 
-        public abstract void ApplyDataParams(object[] data);
+        public abstract void ApplyDataParamsAsync(object[] data);
     }
 }

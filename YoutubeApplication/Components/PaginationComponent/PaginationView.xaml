@@ -9,7 +9,7 @@
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
-    <!--<UserControl.Resources>
+    <UserControl.Resources>
         <Style x:Key="PaginationButtonStyle"
                TargetType="Button">
             <Setter Property="MinWidth"
@@ -206,8 +206,8 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-    </Grid>-->
-    <Grid HorizontalAlignment="Center"
+    </Grid>
+    <!--<Grid HorizontalAlignment="Center"
           VerticalAlignment="Center"
           Background="{DynamicResource MaterialDesignPaper}">
         <StackPanel Orientation="Horizontal">
@@ -257,5 +257,5 @@
             </ComboBox>
 
         </StackPanel>
-    </Grid>
+    </Grid>-->
 </UserControl>

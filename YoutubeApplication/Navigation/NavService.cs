@@ -38,7 +38,7 @@ namespace YoutubeApplication.Navigation
             }
 
             if (page.DataContext is INavAware aware)
-                aware.ApplyDataParams(args);
+                aware.ApplyDataParamsAsync(args);
 
             if (_currentPage != null)
                 _prevPage = _currentPage;

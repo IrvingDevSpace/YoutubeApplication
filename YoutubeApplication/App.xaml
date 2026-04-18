@@ -1,17 +1,24 @@
-﻿<Application x:Class="YoutubeApplication.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:YoutubeApplication"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+﻿<Application
+    x:Class="YoutubeApplication.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:YoutubeApplication.Converters"
+    xmlns:local="clr-namespace:YoutubeApplication"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:BundledTheme BaseTheme="Dark"
-                                             PrimaryColor="Indigo"
-                                             SecondaryColor="Amber" />
+                <materialDesign:BundledTheme
+                    BaseTheme="Light"
+                    PrimaryColor="Indigo"
+                    SecondaryColor="Amber" />
 
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <converters:BigNumberConverter x:Key="BigNumberConverter" />
+            <converters:RelativeTimeConverter x:Key="RelativeTimeConverter" />
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

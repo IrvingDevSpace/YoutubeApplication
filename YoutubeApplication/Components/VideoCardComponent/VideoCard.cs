@@ -7,9 +7,11 @@ namespace YoutubeApplication.Components.VideoCardComponent
     {
         public string Title { get; set; }
 
-        public string VideoUrl { get; set; }
+        public string VideoId { get; set; }
 
         public string ImgSrc { get; set; }
+
+        public string ChannelId { get; set; }
 
         public string ChannelName { get; set; }
 

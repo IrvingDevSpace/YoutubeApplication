@@ -60,7 +60,7 @@ namespace YoutubeApplication.Pages.VideoPage
             else
                 await _presenter.UnsubscribeAsync(_currentSubscriptionId);
 
-            await GetIsSubscribedTask();
+            GetIsSubscribedTask();
         }
 
         public async Task ExecuteRating(RatingTag target)
@@ -69,22 +69,20 @@ namespace YoutubeApplication.Pages.VideoPage
 
             await _presenter.RateAsync(VideoCard.VideoId, UserRating);
 
-            await LoadVideoDetailsTask();
+            LoadVideoDetailsTask();
         }
 
         public override async void ApplyDataParamsAsync(object[] data)
         {
             VideoCard = (VideoCard)data[0];
 
-            await Task.WhenAll(
-                GetChannelInfoTask(),
-                GetIsSubscribedTask(),
-                LoadVideoDetailsTask(),
-                GetCommentsTask()
-            );
+            GetChannelInfoTask();
+            GetIsSubscribedTask();
+            LoadVideoDetailsTask();
+            GetCommentsTask();
         }
 
-        private async Task GetChannelInfoTask()
+        private async void GetChannelInfoTask()
         {
             var result = await _presenter.GetChannelByIdAsync(VideoCard.ChannelId);
             if (result.IsSuccess && result.Data?.items?.Count > 0)
@@ -96,7 +94,7 @@ namespace YoutubeApplication.Pages.VideoPage
             }
         }
 
-        private async Task GetIsSubscribedTask()
+        private async void GetIsSubscribedTask()
         {
             var result = await _presenter.GetSubscriptionIdAsync(VideoCard.ChannelId);
 
@@ -112,7 +110,7 @@ namespace YoutubeApplication.Pages.VideoPage
             }
         }
 
-        private async Task LoadVideoDetailsTask()
+        private async void LoadVideoDetailsTask()
         {
             var statsTask = _presenter.GetStatisticsAsync(VideoCard.VideoId);
             var ratingTask = _presenter.GetRatingAsync(VideoCard.VideoId);
@@ -135,28 +133,47 @@ namespace YoutubeApplication.Pages.VideoPage
                 UserRating = rating.Data;
         }
 
-        private async Task GetCommentsTask()
+        private async void GetCommentsTask()
         {
             var result = await _presenter.GetCommentThreadListAsync(VideoCard.VideoId);
-            if (result.IsSuccess && result.Data?.Items?.Count > 0)
-            {
-                var commentThreads = result.Data.Items;
+            if (!(result.IsSuccess && result.Data?.Items?.Count > 0))
+                return;
 
-                CommentThreadItems = new ObservableCollection<CommentThreadItem>(
-                    commentThreads.Select(c => new CommentThreadItem
-                    {
-                        TopLevelComment = MapToCommentItem(c.Snippet.TopLevelComment.Snippet),
-                        Replies = new ObservableCollection<CommentItem>(
-                            c.Replies?.Comments?.Select(x => MapToCommentItem(x.Snippet))
-                            ?? []
-                        )
-                    })
-                );
-            }
+            CommentThreadItems.Clear();
+
+            var commentThreads = result.Data.Items;
+
+            var tasks = commentThreads.Select(async c =>
+            {
+                var item = new CommentThreadItem
+                {
+                    // 處理主留言
+                    TopLevelComment = await MapToCommentItem(c.Snippet.TopLevelComment.Snippet, c.Snippet.TopLevelComment.Id),
+
+                    // 處理回覆
+                    Replies = new ObservableCollection<CommentItem>(
+                        await Task.WhenAll(c.Replies?.Comments?.Select(x => MapToCommentItem(x.Snippet, x.Id)) ?? [])
+                    )
+                };
+                return item;
+            });
+
+            var results = await Task.WhenAll(tasks);
+
+            CommentThreadItems = new ObservableCollection<CommentThreadItem>(results);
         }
 
-        private CommentItem MapToCommentItem(CommentSnippet s)
+        private async Task<CommentItem> MapToCommentItem(CommentSnippet s, string id)
         {
+            async Task<RatingTag> FetchRatingAsync(string id)
+            {
+                var comment = await _presenter.GetCommentByIdAsync(id);
+                if (comment.Data?.Items?.Count > 0)
+                    return comment.Data.Items[0].Snippet.ViewerRating.ToRatingTag();
+                else
+                    return RatingTag.None;
+            }
+
             var item = new CommentItem
             {
                 AuthorName = s.AuthorDisplayName,
@@ -164,7 +181,7 @@ namespace YoutubeApplication.Pages.VideoPage
                 Text = s.TextOriginal,
                 UpdatedAt = s.UpdatedAt,
                 LikeCount = s.LikeCount,
-                UserRating = s.ViewerRating.ToRatingTag(),
+                UserRating = await FetchRatingAsync(id),
             };
 
             return item;

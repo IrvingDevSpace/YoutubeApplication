@@ -1,4 +1,5 @@
-﻿using YoutubeAPI.Models.CommentThread;
+﻿using YoutubeAPI.Models.Comment;
+using YoutubeAPI.Models.CommentThread;
 using YoutubeAPI.Models.Subscription;
 using YoutubeAPI.Models.Video;
 using YoutubeApplication.Common;
@@ -23,5 +24,7 @@ namespace YoutubeApplication.Presenters.Interfaces
         Task<Result> RateAsync(string videoId, RatingTag rating);
 
         Task<Result<CommentThreadListResponse>> GetCommentThreadListAsync(string videoId);
+
+        Task<Result<CommentListResponse>> GetCommentByIdAsync(string commentId);
     }
 }

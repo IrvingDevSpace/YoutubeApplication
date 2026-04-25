@@ -238,6 +238,20 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <comment:CommentThreadView Margin="4" CommentThread="{Binding}" />
+                            <!--<TextBlock>
+                                <Run Text="{Binding TopLevelComment.Text}" />
+                                <Run Text="{Binding TopLevelComment.UserRating}" />
+                                <ItemsControl ItemsSource="{Binding Replies}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <Run Text="{Binding Text}" />
+                                                <Run Text="{Binding UserRating}" />
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </TextBlock>-->
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

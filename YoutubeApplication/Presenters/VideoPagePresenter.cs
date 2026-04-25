@@ -1,4 +1,5 @@
 ﻿using YoutubeAPI;
+using YoutubeAPI.Models.Comment;
 using YoutubeAPI.Models.CommentThread;
 using YoutubeAPI.Models.Subscription;
 using YoutubeAPI.Models.Video;
@@ -82,6 +83,14 @@ namespace YoutubeApplication.Presenters
             return await ExecuteAsync(async () =>
             {
                 return await _context.CommentThread.GetCommentsAsync(videoId);
+            });
+        }
+
+        public async Task<Result<CommentListResponse>> GetCommentByIdAsync(string commentId)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                return await _context.Comment.GetByIdAsync(commentId);
             });
         }
     }

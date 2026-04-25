@@ -11,7 +11,6 @@
     mc:Ignorable="d">
     <Grid>
         <StackPanel Margin="0,0,0,20">
-
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -24,7 +23,7 @@
                     Margin="0,0,15,0"
                     VerticalAlignment="Top">
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding CommentThread.TopLevelComment.ProfileImageUrl, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                        <ImageBrush ImageSource="{Binding CommentThread.TopLevelComment.ProfileImageUrl, RelativeSource={RelativeSource AncestorType=UserControl}, IsAsync=True}" />
                     </Ellipse.Fill>
                 </Ellipse>
 
@@ -37,10 +36,9 @@
                         <TextBlock
                             VerticalAlignment="Center"
                             FontSize="12"
-                            Foreground="{DynamicResource MaterialDesignBodyLight}">
+                            Foreground="#888888">
                             <Run Text="{Binding CommentThread.TopLevelComment.UpdatedAt, Converter={StaticResource RelativeTimeConverter}, RelativeSource={RelativeSource AncestorType=UserControl}}" />
                         </TextBlock>
-
                     </StackPanel>
 
                     <TextBlock
@@ -50,57 +48,77 @@
                         TextWrapping="Wrap" />
 
                     <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+
                         <Button
                             Width="30"
                             Height="30"
                             Padding="0"
-                            Style="{StaticResource MaterialDesignToolButton}">
-                            <materialDesign:PackIcon Width="18" Height="18">
-
-                                <materialDesign:PackIcon.Style>
-                                    <Style TargetType="materialDesign:PackIcon">
-                                        <Setter Property="Kind" Value="ThumbUpOutline" />
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Foreground="Gray">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="16">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="&#xE8E1;" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding CommentThread.TopLevelComment.UserRating, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Like">
-                                                <Setter Property="Kind" Value="ThumbUp" />
+                                                <Setter Property="Text" Value="&#xE8E1;" />
+                                                <Setter Property="Foreground" Value="#005A9E" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </materialDesign:PackIcon.Style>
-                            </materialDesign:PackIcon>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Button>
+
                         <TextBlock
                             Margin="5,0,15,0"
                             VerticalAlignment="Center"
                             FontSize="12"
-                            Foreground="{DynamicResource MaterialDesignBodyLight}"
+                            Foreground="#888888"
                             Text="{Binding CommentThread.TopLevelComment.LikeCount, RelativeSource={RelativeSource AncestorType=UserControl}}" />
 
                         <Button
                             Width="30"
                             Height="30"
                             Padding="0"
-                            Style="{StaticResource MaterialDesignToolButton}">
-                            <materialDesign:PackIcon Width="18" Height="18">
-                                <materialDesign:PackIcon.Style>
-                                    <Style TargetType="materialDesign:PackIcon">
-                                        <Setter Property="Kind" Value="ThumbDownOutline" />
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Foreground="Gray">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="16">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="&#xE8E0;" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding CommentThread.TopLevelComment.UserRating, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Dislike">
-                                                <Setter Property="Kind" Value="ThumbDown" />
+                                                <Setter Property="Text" Value="&#xE8E0;" />
+                                                <Setter Property="Foreground" Value="#005A9E" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </materialDesign:PackIcon.Style>
-                            </materialDesign:PackIcon>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Button>
 
                         <Button
                             Height="30"
                             Margin="15,0,0,0"
+                            Background="Transparent"
+                            BorderThickness="0"
                             Content="回覆"
+                            Cursor="Hand"
                             FontSize="12"
-                            Style="{StaticResource MaterialDesignFlatButton}" />
+                            Foreground="#666666" />
                     </StackPanel>
                 </StackPanel>
             </Grid>
@@ -111,7 +129,7 @@
                         <Border
                             Margin="20,0,0,15"
                             Padding="35,0,0,0"
-                            BorderBrush="{DynamicResource MaterialDesignDivider}"
+                            BorderBrush="#E0E0E0"
                             BorderThickness="1,0,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -125,7 +143,7 @@
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Top">
                                     <Ellipse.Fill>
-                                        <ImageBrush ImageSource="{Binding ProfileImageUrl}" />
+                                        <ImageBrush ImageSource="{Binding ProfileImageUrl, IsAsync=True}" />
                                     </Ellipse.Fill>
                                 </Ellipse>
 
@@ -139,7 +157,7 @@
                                         <TextBlock
                                             VerticalAlignment="Center"
                                             FontSize="12"
-                                            Foreground="{DynamicResource MaterialDesignBodyLight}">
+                                            Foreground="#888888">
                                             <Run Text="{Binding UpdatedAt, Converter={StaticResource RelativeTimeConverter}}" />
                                         </TextBlock>
                                     </StackPanel>
@@ -155,27 +173,37 @@
                                             Width="25"
                                             Height="25"
                                             Padding="0"
-                                            Style="{StaticResource MaterialDesignToolButton}">
-                                            <materialDesign:PackIcon
-                                                Width="15"
-                                                Height="15"
-                                                Kind="ThumbUpOutline" />
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Foreground="Gray">
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="14"
+                                                Text="&#xE8E1;" />
                                         </Button>
                                         <TextBlock
                                             Margin="5,0,15,0"
                                             VerticalAlignment="Center"
                                             FontSize="12"
-                                            Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                            Foreground="#888888"
                                             Text="{Binding LikeCount}" />
                                         <Button
                                             Width="25"
                                             Height="25"
                                             Padding="0"
-                                            Style="{StaticResource MaterialDesignToolButton}">
-                                            <materialDesign:PackIcon
-                                                Width="15"
-                                                Height="15"
-                                                Kind="ThumbDownOutline" />
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Foreground="Gray">
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                FontSize="14"
+                                                Text="&#xE8E0;" />
                                         </Button>
                                     </StackPanel>
                                 </StackPanel>
@@ -184,7 +212,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-
         </StackPanel>
     </Grid>
 </UserControl>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using YoutubeAPI.Models.Comment;
 using YoutubeApplication.Common;
@@ -76,10 +77,10 @@ namespace YoutubeApplication.Pages.VideoPage
         {
             VideoCard = (VideoCard)data[0];
 
+            GetCommentsTask();
             GetChannelInfoTask();
             GetIsSubscribedTask();
             LoadVideoDetailsTask();
-            GetCommentsTask();
         }
 
         private async void GetChannelInfoTask()
@@ -135,12 +136,18 @@ namespace YoutubeApplication.Pages.VideoPage
 
         private async void GetCommentsTask()
         {
+            CommentThreadItems.Clear();
+
+            Debug.WriteLine("1");
+            Debug.WriteLine(DateTime.Now);
             var result = await _presenter.GetCommentThreadListAsync(VideoCard.VideoId);
+            Debug.WriteLine("2");
+            Debug.WriteLine(DateTime.Now);
             if (!(result.IsSuccess && result.Data?.Items?.Count > 0))
                 return;
 
-            CommentThreadItems.Clear();
-
+            Debug.WriteLine("3");
+            Debug.WriteLine(DateTime.Now);
             var commentThreads = result.Data.Items;
 
             var tasks = commentThreads.Select(async c =>
@@ -159,8 +166,11 @@ namespace YoutubeApplication.Pages.VideoPage
             });
 
             var results = await Task.WhenAll(tasks);
-
+            Debug.WriteLine("4");
+            Debug.WriteLine(DateTime.Now);
             CommentThreadItems = new ObservableCollection<CommentThreadItem>(results);
+            Debug.WriteLine("5");
+            Debug.WriteLine(DateTime.Now);
         }
 
         private async Task<CommentItem> MapToCommentItem(CommentSnippet s, string id)

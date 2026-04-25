@@ -13,7 +13,7 @@ namespace YoutubeApplication.Converters
             if (!DateTime.TryParse(value.ToString(), out DateTime dateTime))
                 return value.ToString() ?? string.Empty;
 
-            var timeSpan = DateTime.UtcNow - dateTime.ToUniversalTime();
+            var timeSpan = DateTime.UtcNow - dateTime;
 
             if (timeSpan.TotalSeconds < 60)
                 return "剛剛";

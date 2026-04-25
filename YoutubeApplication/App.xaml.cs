@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using YoutubeApplication.Context;
+using YoutubeApplication.Models;
 using YoutubeApplication.Navigation;
 using YoutubeApplication.Presenters;
 using YoutubeApplication.Views.Home;
@@ -13,6 +14,7 @@ namespace YoutubeApplication
     public partial class App : Application
     {
         public static INavService NavService { get; set; }
+        public static MyChannel MyChannel { get; set; }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
@@ -23,8 +25,19 @@ namespace YoutubeApplication
             var context = YoutubeContextProvider.Context;
             var mainVm = new MainWindowViewModel();
 
-            void GoToHome()
+            async void GoToHome()
             {
+                var result = await context.Channel.GetMyChannelAsync();
+                var channel = result?.items?.FirstOrDefault();
+                if (channel != null)
+                {
+                    MyChannel = new MyChannel
+                    {
+                        ChannelId = channel.id,
+                        Snippet = channel.snippet,
+                    };
+                }
+
                 var homeVm = new HomeViewModel();
                 mainVm.CurrentVm = homeVm;
                 mainVm.WindowTitle = "YouTube - 首頁";

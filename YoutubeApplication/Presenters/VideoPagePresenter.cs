@@ -1,10 +1,14 @@
-﻿using YoutubeAPI;
+﻿using System.Collections.ObjectModel;
+using YoutubeAPI;
+using YoutubeAPI.Models;
 using YoutubeAPI.Models.Comment;
 using YoutubeAPI.Models.CommentThread;
 using YoutubeAPI.Models.Subscription;
 using YoutubeAPI.Models.Video;
 using YoutubeApplication.Common;
+using YoutubeApplication.Components.CommentComponent;
 using YoutubeApplication.Enums;
+using YoutubeApplication.Helpers;
 using YoutubeApplication.Presenters.Base;
 using YoutubeApplication.Presenters.Interfaces;
 
@@ -86,11 +90,93 @@ namespace YoutubeApplication.Presenters
             });
         }
 
+        public async Task<Result<List<CommentThreadItem>>> GetProcessedCommentThreadsAsync(string videoId)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                var response = await _context.CommentThread.GetCommentsAsync(videoId);
+                if (response?.Items == null) return [];
+
+                var tasks = response.Items.Select(async c => new CommentThreadItem
+                {
+                    // 處理主留言
+                    TopLevelComment = await MapToCommentItemInternal(c.Snippet.TopLevelComment.Snippet, c.Snippet.TopLevelComment.Id),
+
+                    // 處理回覆 (Replies)
+                    Replies = new ObservableCollection<CommentItem>(
+                        await Task.WhenAll(c.Replies?.Comments?.Select(x => MapToCommentItemInternal(x.Snippet, x.Id)) ?? Array.Empty<Task<CommentItem>>())
+                    )
+                });
+
+                var results = await Task.WhenAll(tasks);
+                return results.ToList();
+            });
+        }
+
+        private async Task<CommentItem> MapToCommentItemInternal(CommentSnippet s, string id)
+        {
+            async Task<RatingTag> FetchRatingAsync(string commentId)
+            {
+                var comment = await GetCommentByIdAsync(commentId);
+                return comment.Data?.Items?.FirstOrDefault()?.Snippet?.ViewerRating.ToRatingTag() ?? RatingTag.None;
+            }
+
+            return new CommentItem
+            {
+                Id = id,
+                AuthorName = s.AuthorDisplayName,
+                ProfileImageUrl = s.AuthorProfileImageUrl,
+                Text = s.TextOriginal,
+                TextSegments = CommentHelper.ParseComment(s.TextOriginal),
+                UpdatedAt = s.UpdatedAt,
+                LikeCount = s.LikeCount,
+                UserRating = await FetchRatingAsync(id)
+            };
+        }
+
         public async Task<Result<CommentListResponse>> GetCommentByIdAsync(string commentId)
         {
             return await ExecuteAsync(async () =>
             {
                 return await _context.Comment.GetByIdAsync(commentId);
+            });
+        }
+
+        public async Task<Result> AddCommentThreadAsync(string videoId, string content)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                var request = new CommentThreadCreateRequest
+                {
+                    Snippet = new CommentThreadSnippet
+                    {
+                        VideoId = videoId,
+                        TopLevelComment = new TopLevelComment
+                        {
+                            Snippet = new CommentSnippet
+                            {
+                                TextOriginal = content
+                            }
+                        }
+                    }
+                };
+                await _context.CommentThread.AddCommentAsync(request);
+            });
+        }
+
+        public async Task<Result> AddCommentAsync(string videoId, string content)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                var request = new CommentAddRequest
+                {
+                    Snippet = new CommentSnippet
+                    {
+                        ParentId = videoId,
+                        TextOriginal = content
+                    }
+                };
+                await _context.Comment.CreateAsync(request);
             });
         }
     }

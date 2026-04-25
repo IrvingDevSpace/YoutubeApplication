@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Windows.Input;
 using YoutubeAPI.Models.Comment;
 using YoutubeApplication.Common;
 using YoutubeApplication.Components.CommentComponent;
 using YoutubeApplication.Components.VideoCardComponent;
 using YoutubeApplication.Enums;
+using YoutubeApplication.Helpers;
 using YoutubeApplication.Presenters.Interfaces;
 using YoutubeApplication.Views;
 
@@ -43,6 +43,8 @@ namespace YoutubeApplication.Pages.VideoPage
 
         public string PublishDate { get; set; } = "";
 
+        public ICommand OnSubmitCommentCommand { get; set; }
+
         public ObservableCollection<CommentThreadItem> CommentThreadItems { get; set; } = [];
 
         public VideoPageViewModel(IVideoPagePresenter presenter)
@@ -52,6 +54,7 @@ namespace YoutubeApplication.Pages.VideoPage
             SubscribeCommand = new AsyncRelayCommand(ExecuteSubscribe);
             LikeCommand = new AsyncRelayCommand(() => ExecuteRating(RatingTag.Like));
             DislikeCommand = new AsyncRelayCommand(() => ExecuteRating(RatingTag.Dislike));
+            OnSubmitCommentCommand = new AsyncRelayCommand<string>(SubmitCommentAsync);
         }
 
         public async Task ExecuteSubscribe()
@@ -68,7 +71,7 @@ namespace YoutubeApplication.Pages.VideoPage
         {
             var nextRating = (UserRating == target) ? RatingTag.None : target;
 
-            await _presenter.RateAsync(VideoCard.VideoId, UserRating);
+            await _presenter.RateAsync(VideoCard.VideoId, nextRating);
 
             LoadVideoDetailsTask();
         }
@@ -89,8 +92,8 @@ namespace YoutubeApplication.Pages.VideoPage
             if (result.IsSuccess && result.Data?.items?.Count > 0)
             {
                 var channel = result.Data.items[0];
-                ChannelImageUrl = channel.snippet.thumbnails.high.url;
-                ChannelName = channel.snippet.title;
+                ChannelImageUrl = channel.snippet.Thumbnails.High.Url;
+                ChannelName = channel.snippet.Title;
                 ChannelSubCount = channel.statistics.subscriberCount;
             }
         }
@@ -136,42 +139,49 @@ namespace YoutubeApplication.Pages.VideoPage
 
         private async void GetCommentsTask()
         {
-            CommentThreadItems.Clear();
-
-            Debug.WriteLine("1");
-            Debug.WriteLine(DateTime.Now);
-            var result = await _presenter.GetCommentThreadListAsync(VideoCard.VideoId);
-            Debug.WriteLine("2");
-            Debug.WriteLine(DateTime.Now);
-            if (!(result.IsSuccess && result.Data?.Items?.Count > 0))
-                return;
-
-            Debug.WriteLine("3");
-            Debug.WriteLine(DateTime.Now);
-            var commentThreads = result.Data.Items;
-
-            var tasks = commentThreads.Select(async c =>
-            {
-                var item = new CommentThreadItem
-                {
-                    // 處理主留言
-                    TopLevelComment = await MapToCommentItem(c.Snippet.TopLevelComment.Snippet, c.Snippet.TopLevelComment.Id),
-
-                    // 處理回覆
-                    Replies = new ObservableCollection<CommentItem>(
-                        await Task.WhenAll(c.Replies?.Comments?.Select(x => MapToCommentItem(x.Snippet, x.Id)) ?? [])
-                    )
-                };
-                return item;
-            });
-
-            var results = await Task.WhenAll(tasks);
-            Debug.WriteLine("4");
-            Debug.WriteLine(DateTime.Now);
-            CommentThreadItems = new ObservableCollection<CommentThreadItem>(results);
-            Debug.WriteLine("5");
-            Debug.WriteLine(DateTime.Now);
+            var result = await _presenter.GetProcessedCommentThreadsAsync(VideoCard.VideoId);
+            if (result.IsSuccess && result.Data != null)
+                CommentThreadItems = new ObservableCollection<CommentThreadItem>(result.Data);
         }
+
+        //private async void GetCommentsTask()
+        //{
+        //    CommentThreadItems.Clear();
+
+        //    Debug.WriteLine("1");
+        //    Debug.WriteLine(DateTime.Now);
+        //    var result = await _presenter.GetCommentThreadListAsync(VideoCard.VideoId);
+        //    Debug.WriteLine("2");
+        //    Debug.WriteLine(DateTime.Now);
+        //    if (!(result.IsSuccess && result.Data?.Items?.Count > 0))
+        //        return;
+
+        //    Debug.WriteLine("3");
+        //    Debug.WriteLine(DateTime.Now);
+        //    var commentThreads = result.Data.Items;
+
+        //    var tasks = commentThreads.Select(async c =>
+        //    {
+        //        var item = new CommentThreadItem
+        //        {
+        //            // 處理主留言
+        //            TopLevelComment = await MapToCommentItem(c.Snippet.TopLevelComment.Snippet, c.Snippet.TopLevelComment.Id),
+
+        //            // 處理回覆
+        //            Replies = new ObservableCollection<CommentItem>(
+        //                await Task.WhenAll(c.Replies?.Comments?.Select(x => MapToCommentItem(x.Snippet, x.Id)) ?? [])
+        //            )
+        //        };
+        //        return item;
+        //    });
+
+        //    var results = await Task.WhenAll(tasks);
+        //    Debug.WriteLine("4");
+        //    Debug.WriteLine(DateTime.Now);
+        //    CommentThreadItems = new ObservableCollection<CommentThreadItem>(results);
+        //    Debug.WriteLine("5");
+        //    Debug.WriteLine(DateTime.Now);
+        //}
 
         private async Task<CommentItem> MapToCommentItem(CommentSnippet s, string id)
         {
@@ -195,6 +205,25 @@ namespace YoutubeApplication.Pages.VideoPage
             };
 
             return item;
+        }
+
+        public async Task SubmitCommentAsync(string comment)
+        {
+            await _presenter.AddCommentThreadAsync(VideoCard.VideoId, comment);
+            CommentThreadItems.Insert(0, new CommentThreadItem
+            {
+                TopLevelComment = new CommentItem
+                {
+                    Id = App.MyChannel.ChannelId,
+                    AuthorName = App.MyChannel.Snippet.Title,
+                    ProfileImageUrl = App.MyChannel.Snippet.Thumbnails.High.Url,
+                    Text = comment,
+                    TextSegments = CommentHelper.ParseComment(comment),
+                    UpdatedAt = DateTime.Now,
+                    LikeCount = 0,
+                    UserRating = RatingTag.None,
+                }
+            });
         }
     }
 }

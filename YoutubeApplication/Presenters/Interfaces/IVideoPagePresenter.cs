@@ -3,6 +3,7 @@ using YoutubeAPI.Models.CommentThread;
 using YoutubeAPI.Models.Subscription;
 using YoutubeAPI.Models.Video;
 using YoutubeApplication.Common;
+using YoutubeApplication.Components.CommentComponent;
 using YoutubeApplication.Enums;
 
 namespace YoutubeApplication.Presenters.Interfaces
@@ -25,6 +26,12 @@ namespace YoutubeApplication.Presenters.Interfaces
 
         Task<Result<CommentThreadListResponse>> GetCommentThreadListAsync(string videoId);
 
+        Task<Result<List<CommentThreadItem>>> GetProcessedCommentThreadsAsync(string videoId);
+
         Task<Result<CommentListResponse>> GetCommentByIdAsync(string commentId);
+
+        Task<Result> AddCommentThreadAsync(string videoId, string content);
+
+        Task<Result> AddCommentAsync(string videoId, string content);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using PropertyChanged;
 using YoutubeApplication.Enums;
+using YoutubeApplication.Models;
 
 namespace YoutubeApplication.Components.CommentComponent
 {
@@ -13,6 +14,8 @@ namespace YoutubeApplication.Components.CommentComponent
         public string ProfileImageUrl { get; set; }
 
         public string Text { get; set; }
+
+        public List<TextSegment> TextSegments { get; set; }
 
         public DateTime UpdatedAt { get; set; }
 

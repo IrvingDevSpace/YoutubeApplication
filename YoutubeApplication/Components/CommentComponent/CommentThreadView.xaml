@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helper="clr-namespace:YoutubeApplication.Helpers"
     xmlns:local="clr-namespace:YoutubeApplication.Components.CommentComponent"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -41,10 +42,16 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <TextBlock
+                    <!--<TextBlock
                         Margin="0,0,0,10"
                         LineHeight="20"
                         Text="{Binding CommentThread.TopLevelComment.Text, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        TextWrapping="Wrap" />-->
+
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        helper:RichTextHelper.Segments="{Binding CommentThread.TopLevelComment.TextSegments, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        LineHeight="20"
                         TextWrapping="Wrap" />
 
                     <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
@@ -162,10 +169,16 @@
                                         </TextBlock>
                                     </StackPanel>
 
-                                    <TextBlock
+                                    <!--<TextBlock
                                         Margin="0,0,0,5"
                                         LineHeight="20"
                                         Text="{Binding Text}"
+                                        TextWrapping="Wrap" />-->
+
+                                    <TextBlock
+                                        Margin="0,0,0,10"
+                                        helper:RichTextHelper.Segments="{Binding TextSegments}"
+                                        LineHeight="20"
                                         TextWrapping="Wrap" />
 
                                     <StackPanel Orientation="Horizontal">

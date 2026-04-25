@@ -2,6 +2,7 @@
     x:Class="YoutubeApplication.Pages.VideoPage.VideoPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:addComment="clr-namespace:YoutubeApplication.Components.AddCommentComponent"
     xmlns:comment="clr-namespace:YoutubeApplication.Components.CommentComponent"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="clr-namespace:YoutubeApplication.Helpers"
@@ -233,6 +234,11 @@
             </Grid>
 
             <StackPanel Grid.Column="2">
+
+                <addComment:AddCommentView
+                    Width="400"
+                    Margin="0,0,0,30"
+                    OnSubmitCommand="{Binding OnSubmitCommentCommand}" />
 
                 <ItemsControl ItemsSource="{Binding CommentThreadItems}">
                     <ItemsControl.ItemTemplate>

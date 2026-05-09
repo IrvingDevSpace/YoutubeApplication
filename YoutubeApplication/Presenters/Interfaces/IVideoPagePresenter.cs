@@ -32,6 +32,6 @@ namespace YoutubeApplication.Presenters.Interfaces
 
         Task<Result> AddCommentThreadAsync(string videoId, string content);
 
-        Task<Result> AddCommentAsync(string videoId, string content);
+        Task<Result> AddCommentAsync(string parentId, string content);
     }
 }

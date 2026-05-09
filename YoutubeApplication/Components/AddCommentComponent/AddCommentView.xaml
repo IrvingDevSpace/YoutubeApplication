@@ -9,36 +9,87 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid VerticalAlignment="Center">
+    <Grid Margin="8">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
+            <!--  左側：頭像  -->
             <ColumnDefinition Width="Auto" />
+            <!--  右側：輸入區與按鈕  -->
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Border
+        <!--  1. 頭像 (用 Ellipse 呈現圓形)  -->
+        <Ellipse
             Grid.Column="0"
-            Height="40"
-            BorderThickness="1,1,0,1"
-            CornerRadius="20,0,0,20">
+            Width="24"
+            Height="24"
+            Margin="0,0,12,0"
+            VerticalAlignment="Top">
+            <Ellipse.Fill>
+                <ImageBrush ImageSource="{Binding ChannelImageUrl, RelativeSource={RelativeSource AncestorType=UserControl}, IsAsync=True}" />
+            </Ellipse.Fill>
+        </Ellipse>
+
+        <!--  2. 右側主內容區  -->
+        <StackPanel Grid.Column="1">
+
+            <!--  輸入框 (保留底部一條線)  -->
             <TextBox
-                Margin="16,0,8,0"
+                MinHeight="24"
+                Margin="0,0,0,8"
                 VerticalAlignment="Center"
-                materialDesign:HintAssist.Hint="請輸入留言"
+                materialDesign:HintAssist.Hint="新增留言..."
                 materialDesign:HintAssist.IsFloating="False"
                 materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
                 AcceptsReturn="True"
-                BorderThickness="0"
-                FontSize="16"
+                BorderBrush="#888888"
+                BorderThickness="0,0,0,1"
+                FontSize="14"
                 Text="{Binding Content, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
                 TextWrapping="Wrap"
                 VerticalScrollBarVisibility="Auto" />
-        </Border>
 
-        <Button
-            Grid.Column="1"
-            Margin="0,0,8,0"
-            Command="{Binding SubmitCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-            Content="送出"
-            Style="{StaticResource MaterialDesignRaisedButton}" />
+            <!--  下方操作列 (表情符號 + 取消/回覆按鈕)  -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <!--  左側圖示  -->
+                    <ColumnDefinition Width="*" />
+                    <!--  中間空白撐開  -->
+                    <ColumnDefinition Width="Auto" />
+                    <!--  右側按鈕  -->
+                </Grid.ColumnDefinitions>
+
+                <!--  笑臉表情圖示按鈕  -->
+                <Button
+                    Grid.Column="0"
+                    Width="32"
+                    Height="32"
+                    Padding="0"
+                    Style="{StaticResource MaterialDesignIconForegroundButton}">
+                    <materialDesign:PackIcon
+                        Width="20"
+                        Height="20"
+                        Kind="EmoticonOutline" />
+                </Button>
+
+                <!--  右側按鈕群組  -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <!--  取消按鈕 (純文字樣式)  -->
+                    <Button
+                        Margin="0,0,8,0"
+                        Command="{Binding CancelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Content="取消"
+                        Style="{StaticResource MaterialDesignFlatButton}" />
+
+                    <!--  回覆按鈕 (圓角實心樣式)  -->
+                    <Button
+                        materialDesign:ButtonAssist.CornerRadius="16"
+                        Command="{Binding SubmitCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Content="回覆"
+                        Style="{StaticResource MaterialDesignRaisedButton}" />
+                </StackPanel>
+            </Grid>
+
+        </StackPanel>
     </Grid>
 </UserControl>

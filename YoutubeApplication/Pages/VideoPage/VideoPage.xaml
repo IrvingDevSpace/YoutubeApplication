@@ -235,10 +235,74 @@
 
             <StackPanel Grid.Column="2">
 
-                <addComment:AddCommentView
-                    Width="400"
-                    Margin="0,0,0,30"
-                    OnSubmitCommand="{Binding OnSubmitCommentCommand}" />
+                <Grid Margin="0,0,0,30">
+                    <Grid Margin="8">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsCommentExpanded}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Ellipse
+                            Grid.Column="0"
+                            Width="24"
+                            Height="24"
+                            Margin="0,0,12,0"
+                            VerticalAlignment="Top">
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="{Binding MyChannelImageUrl, IsAsync=True}" />
+                            </Ellipse.Fill>
+                        </Ellipse>
+
+                        <Border
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            BorderBrush="#888888"
+                            BorderThickness="0,0,0,1"
+                            Cursor="IBeam">
+
+                            <!--  點擊這一整塊區域都會觸發展開  -->
+                            <Border.InputBindings>
+                                <MouseBinding Command="{Binding CommentExpandedCommand}" MouseAction="LeftClick" />
+                            </Border.InputBindings>
+
+                            <!--  這裡用 TextBlock 模擬輸入框的提示文字，不要用 TextBox  -->
+                            <TextBlock
+                                Margin="0,4,0,4"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="#AAAAAA"
+                                Text="新增留言..." />
+                        </Border>
+                    </Grid>
+
+                    <addComment:AddCommentView
+                        ChannelImageUrl="{Binding MyChannelImageUrl}"
+                        OnCancelCommand="{Binding CommentCancelCommand}"
+                        OnSubmitCommand="{Binding OnSubmitCommentCommand}">
+                        <addComment:AddCommentView.Style>
+                            <Style TargetType="UserControl">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsCommentExpanded}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </addComment:AddCommentView.Style>
+                    </addComment:AddCommentView>
+                </Grid>
 
                 <ItemsControl ItemsSource="{Binding CommentThreadItems}">
                     <ItemsControl.ItemTemplate>

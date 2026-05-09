@@ -2,6 +2,7 @@
     x:Class="YoutubeApplication.Components.CommentComponent.CommentThreadView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:addComment="clr-namespace:YoutubeApplication.Components.AddCommentComponent"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helper="clr-namespace:YoutubeApplication.Helpers"
     xmlns:local="clr-namespace:YoutubeApplication.Components.CommentComponent"
@@ -122,6 +123,7 @@
                             Margin="15,0,0,0"
                             Background="Transparent"
                             BorderThickness="0"
+                            Command="{Binding ReplyExpandedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                             Content="回覆"
                             Cursor="Hand"
                             FontSize="12"
@@ -129,6 +131,19 @@
                     </StackPanel>
                 </StackPanel>
             </Grid>
+
+            <addComment:AddCommentView OnCancelCommand="{Binding ReplyCancelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" OnSubmitCommand="{Binding ReplyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                <addComment:AddCommentView.Style>
+                    <Style TargetType="UserControl">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsReplyExpanded, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </addComment:AddCommentView.Style>
+            </addComment:AddCommentView>
 
             <ItemsControl ItemsSource="{Binding CommentThread.Replies, RelativeSource={RelativeSource AncestorType=UserControl}}">
                 <ItemsControl.ItemTemplate>

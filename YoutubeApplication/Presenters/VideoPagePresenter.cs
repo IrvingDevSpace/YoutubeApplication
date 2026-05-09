@@ -164,7 +164,7 @@ namespace YoutubeApplication.Presenters
             });
         }
 
-        public async Task<Result> AddCommentAsync(string videoId, string content)
+        public async Task<Result> AddCommentAsync(string parentId, string content)
         {
             return await ExecuteAsync(async () =>
             {
@@ -172,7 +172,7 @@ namespace YoutubeApplication.Presenters
                 {
                     Snippet = new CommentSnippet
                     {
-                        ParentId = videoId,
+                        ParentId = parentId,
                         TextOriginal = content
                     }
                 };

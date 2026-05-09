@@ -43,6 +43,14 @@ namespace YoutubeApplication.Pages.VideoPage
 
         public string PublishDate { get; set; } = "";
 
+        public string MyChannelImageUrl { get; set; } = App.MyChannel.Snippet.Thumbnails.High.Url;
+
+        public bool IsCommentExpanded { get; set; } = false;
+
+        public ICommand CommentExpandedCommand { get; set; }
+
+        public ICommand CommentCancelCommand { get; set; }
+
         public ICommand OnSubmitCommentCommand { get; set; }
 
         public ObservableCollection<CommentThreadItem> CommentThreadItems { get; set; } = [];
@@ -55,6 +63,8 @@ namespace YoutubeApplication.Pages.VideoPage
             LikeCommand = new AsyncRelayCommand(() => ExecuteRating(RatingTag.Like));
             DislikeCommand = new AsyncRelayCommand(() => ExecuteRating(RatingTag.Dislike));
             OnSubmitCommentCommand = new AsyncRelayCommand<string>(SubmitCommentAsync);
+            CommentExpandedCommand = new RelayCommand(() => IsCommentExpanded = true);
+            CommentCancelCommand = new RelayCommand(() => IsCommentExpanded = false);
         }
 
         public async Task ExecuteSubscribe()
@@ -210,6 +220,25 @@ namespace YoutubeApplication.Pages.VideoPage
         public async Task SubmitCommentAsync(string comment)
         {
             await _presenter.AddCommentThreadAsync(VideoCard.VideoId, comment);
+            CommentThreadItems.Insert(0, new CommentThreadItem
+            {
+                TopLevelComment = new CommentItem
+                {
+                    Id = App.MyChannel.ChannelId,
+                    AuthorName = App.MyChannel.Snippet.Title,
+                    ProfileImageUrl = App.MyChannel.Snippet.Thumbnails.High.Url,
+                    Text = comment,
+                    TextSegments = CommentHelper.ParseComment(comment),
+                    UpdatedAt = DateTime.Now,
+                    LikeCount = 0,
+                    UserRating = RatingTag.None,
+                }
+            });
+        }
+
+        public async Task SubmitReplyAsync(string reply)
+        {
+            await _presenter.AddCommentAsync(VideoCard.VideoId, comment);
             CommentThreadItems.Insert(0, new CommentThreadItem
             {
                 TopLevelComment = new CommentItem

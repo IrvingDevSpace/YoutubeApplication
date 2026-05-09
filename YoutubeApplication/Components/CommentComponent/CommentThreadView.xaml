@@ -11,7 +11,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid>
+    <Grid x:Name="Root">
         <StackPanel Margin="0,0,0,20">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -25,7 +25,7 @@
                     Margin="0,0,15,0"
                     VerticalAlignment="Top">
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding CommentThread.TopLevelComment.ProfileImageUrl, RelativeSource={RelativeSource AncestorType=UserControl}, IsAsync=True}" />
+                        <ImageBrush ImageSource="{Binding CommentThread.TopLevelComment.ProfileImageUrl, TargetNullValue={x:Null}, FallbackValue={x:Null}}" />
                     </Ellipse.Fill>
                 </Ellipse>
 
@@ -34,26 +34,117 @@
                         <TextBlock
                             Margin="0,0,10,0"
                             FontWeight="Bold"
-                            Text="{Binding CommentThread.TopLevelComment.AuthorName, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                            Text="{Binding CommentThread.TopLevelComment.AuthorName}" />
                         <TextBlock
                             VerticalAlignment="Center"
                             FontSize="12"
                             Foreground="#888888">
-                            <Run Text="{Binding CommentThread.TopLevelComment.UpdatedAt, Converter={StaticResource RelativeTimeConverter}, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                            <Run Text="{Binding CommentThread.TopLevelComment.UpdatedAt, Converter={StaticResource RelativeTimeConverter}}" />
                         </TextBlock>
                     </StackPanel>
+
+                    <materialDesign:PopupBox
+                        Grid.Column="1"
+                        Margin="0,-5,0,0"
+                        Padding="0"
+                        HorizontalAlignment="Right"
+                        PlacementMode="BottomAndAlignRightEdges"
+                        StaysOpen="False">
+
+                        <materialDesign:PopupBox.ToggleContent>
+                            <materialDesign:PackIcon
+                                Width="18"
+                                Height="18"
+                                Foreground="#888888"
+                                Kind="DotsVertical" />
+                        </materialDesign:PopupBox.ToggleContent>
+
+                        <!--  彈出選單內容區塊  -->
+                        <materialDesign:Card Background="#282828" UniformCornerRadius="12">
+                            <StackPanel Margin="4">
+                                <!--  編輯按鈕  -->
+                                <Button
+                                    Height="40"
+                                    Padding="16,0"
+                                    Command="{Binding EditCommentCmd}"
+                                    Foreground="White"
+                                    Style="{StaticResource MaterialDesignFlatButton}">
+                                    <Grid Width="80">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <materialDesign:PackIcon
+                                            Width="20"
+                                            Height="20"
+                                            VerticalAlignment="Center"
+                                            Kind="PencilOutline" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Margin="8,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="編輯" />
+                                    </Grid>
+                                </Button>
+
+                                <!--  刪除按鈕  -->
+                                <Button
+                                    Height="40"
+                                    Padding="16,0"
+                                    Command="{Binding DelCommentCmd}"
+                                    CommandParameter="{Binding CommentThread.TopLevelComment.Id}"
+                                    Foreground="White"
+                                    Style="{StaticResource MaterialDesignFlatButton}">
+                                    <Grid Width="80">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="30" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <materialDesign:PackIcon
+                                            Width="20"
+                                            Height="20"
+                                            VerticalAlignment="Center"
+                                            Kind="DeleteOutline" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Margin="8,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Text="刪除" />
+                                    </Grid>
+                                </Button>
+                            </StackPanel>
+                        </materialDesign:Card>
+
+                        <!--  顯示邏輯：僅本人的留言顯示  -->
+                        <materialDesign:PopupBox.Style>
+                            <Style BasedOn="{StaticResource {x:Type materialDesign:PopupBox}}" TargetType="materialDesign:PopupBox">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CommentThread.TopLevelComment.IsMine}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </materialDesign:PopupBox.Style>
+                    </materialDesign:PopupBox>
 
                     <!--<TextBlock
                         Margin="0,0,0,10"
                         LineHeight="20"
-                        Text="{Binding CommentThread.TopLevelComment.Text, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Text="{Binding CommentThread.TopLevelComment.Text}"
                         TextWrapping="Wrap" />-->
 
                     <TextBlock
                         Margin="0,0,0,10"
-                        helper:RichTextHelper.Segments="{Binding CommentThread.TopLevelComment.TextSegments, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        helper:RichTextHelper.Segments="{Binding CommentThread.TopLevelComment.TextSegments}"
                         LineHeight="20"
-                        TextWrapping="Wrap" />
+                        TextWrapping="Wrap"
+                        Visibility="{Binding TextVisibility}" />
+
+                    <addComment:AddCommentView
+                        OnCancelCmd="{Binding EditCancelCommentCmd}"
+                        OnSubmitCmd="{Binding SaveCommentCmd}"
+                        Visibility="{Binding EditViewVisibility}" />
 
                     <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
 
@@ -74,7 +165,7 @@
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Text" Value="&#xE8E1;" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding CommentThread.TopLevelComment.UserRating, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Like">
+                                            <DataTrigger Binding="{Binding CommentThread.TopLevelComment.UserRating}" Value="Like">
                                                 <Setter Property="Text" Value="&#xE8E1;" />
                                                 <Setter Property="Foreground" Value="#005A9E" />
                                             </DataTrigger>
@@ -89,7 +180,7 @@
                             VerticalAlignment="Center"
                             FontSize="12"
                             Foreground="#888888"
-                            Text="{Binding CommentThread.TopLevelComment.LikeCount, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                            Text="{Binding CommentThread.TopLevelComment.LikeCount}" />
 
                         <Button
                             Width="30"
@@ -108,7 +199,7 @@
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Text" Value="&#xE8E0;" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding CommentThread.TopLevelComment.UserRating, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Dislike">
+                                            <DataTrigger Binding="{Binding CommentThread.TopLevelComment.UserRating}" Value="Dislike">
                                                 <Setter Property="Text" Value="&#xE8E0;" />
                                                 <Setter Property="Foreground" Value="#005A9E" />
                                             </DataTrigger>
@@ -123,7 +214,7 @@
                             Margin="15,0,0,0"
                             Background="Transparent"
                             BorderThickness="0"
-                            Command="{Binding ReplyExpandedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Command="{Binding ExpandCmd}"
                             Content="回覆"
                             Cursor="Hand"
                             FontSize="12"
@@ -132,12 +223,12 @@
                 </StackPanel>
             </Grid>
 
-            <addComment:AddCommentView OnCancelCommand="{Binding ReplyCancelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" OnSubmitCommand="{Binding ReplyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+            <addComment:AddCommentView OnCancelCmd="{Binding CancelCmd}" OnSubmitCmd="{Binding SubCommentSubmitCmd}">
                 <addComment:AddCommentView.Style>
                     <Style TargetType="UserControl">
                         <Setter Property="Visibility" Value="Collapsed" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsReplyExpanded, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                            <DataTrigger Binding="{Binding IsExpanded}" Value="True">
                                 <Setter Property="Visibility" Value="Visible" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -145,7 +236,7 @@
                 </addComment:AddCommentView.Style>
             </addComment:AddCommentView>
 
-            <ItemsControl ItemsSource="{Binding CommentThread.Replies, RelativeSource={RelativeSource AncestorType=UserControl}}">
+            <ItemsControl ItemsSource="{Binding CommentThread.Replies}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border
@@ -165,7 +256,7 @@
                                     Margin="0,0,10,0"
                                     VerticalAlignment="Top">
                                     <Ellipse.Fill>
-                                        <ImageBrush ImageSource="{Binding ProfileImageUrl, IsAsync=True}" />
+                                        <ImageBrush ImageSource="{Binding ProfileImageUrl, TargetNullValue={x:Null}, FallbackValue={x:Null}}" />
                                     </Ellipse.Fill>
                                 </Ellipse>
 
@@ -183,6 +274,91 @@
                                             <Run Text="{Binding UpdatedAt, Converter={StaticResource RelativeTimeConverter}}" />
                                         </TextBlock>
                                     </StackPanel>
+
+                                    <materialDesign:PopupBox
+                                        Grid.Column="1"
+                                        Margin="0,-5,0,0"
+                                        Padding="0"
+                                        HorizontalAlignment="Right"
+                                        PlacementMode="BottomAndAlignRightEdges"
+                                        StaysOpen="False">
+
+                                        <materialDesign:PopupBox.ToggleContent>
+                                            <materialDesign:PackIcon
+                                                Width="18"
+                                                Height="18"
+                                                Foreground="#888888"
+                                                Kind="DotsVertical" />
+                                        </materialDesign:PopupBox.ToggleContent>
+
+                                        <!--  彈出選單內容區塊  -->
+                                        <materialDesign:Card Background="#282828" UniformCornerRadius="12">
+                                            <StackPanel Margin="4">
+                                                <!--  編輯按鈕  -->
+                                                <Button
+                                                    Height="40"
+                                                    Padding="16,0"
+                                                    Command="{Binding EditCommand}"
+                                                    Foreground="White"
+                                                    Style="{StaticResource MaterialDesignFlatButton}">
+                                                    <Grid Width="80">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="30" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <materialDesign:PackIcon
+                                                            Width="20"
+                                                            Height="20"
+                                                            VerticalAlignment="Center"
+                                                            Kind="PencilOutline" />
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            Margin="8,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Text="編輯" />
+                                                    </Grid>
+                                                </Button>
+
+                                                <!--  刪除按鈕  -->
+                                                <Button
+                                                    Height="40"
+                                                    Padding="16,0"
+                                                    Command="{Binding DataContext.DelCommentCmd, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Id}"
+                                                    Foreground="White"
+                                                    Style="{StaticResource MaterialDesignFlatButton}">
+                                                    <Grid Width="80">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="30" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <materialDesign:PackIcon
+                                                            Width="20"
+                                                            Height="20"
+                                                            VerticalAlignment="Center"
+                                                            Kind="DeleteOutline" />
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            Margin="8,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Text="刪除" />
+                                                    </Grid>
+                                                </Button>
+                                            </StackPanel>
+                                        </materialDesign:Card>
+
+                                        <!--  顯示邏輯：僅本人的留言顯示  -->
+                                        <materialDesign:PopupBox.Style>
+                                            <Style BasedOn="{StaticResource {x:Type materialDesign:PopupBox}}" TargetType="materialDesign:PopupBox">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsMine}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </materialDesign:PopupBox.Style>
+                                    </materialDesign:PopupBox>
 
                                     <!--<TextBlock
                                         Margin="0,0,0,5"

@@ -9,6 +9,10 @@ namespace YoutubeApplication.Components.CommentComponent
     {
         public string Id { get; set; }
 
+        public string AuthorChannelId { get; set; }
+
+        public bool IsMine => AuthorChannelId == App.MyChannel.ChannelId;
+
         public string AuthorName { get; set; }
 
         public string ProfileImageUrl { get; set; }

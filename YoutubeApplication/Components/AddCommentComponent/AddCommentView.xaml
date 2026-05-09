@@ -9,7 +9,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid Margin="8">
+    <Grid x:Name="Root" Margin="8">
         <Grid.ColumnDefinitions>
             <!--  左側：頭像  -->
             <ColumnDefinition Width="Auto" />
@@ -17,7 +17,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!--  1. 頭像 (用 Ellipse 呈現圓形)  -->
+        <!--  頭像 (用 Ellipse 呈現圓形)  -->
         <Ellipse
             Grid.Column="0"
             Width="24"
@@ -25,15 +25,16 @@
             Margin="0,0,12,0"
             VerticalAlignment="Top">
             <Ellipse.Fill>
-                <ImageBrush ImageSource="{Binding ChannelImageUrl, RelativeSource={RelativeSource AncestorType=UserControl}, IsAsync=True}" />
+                <ImageBrush ImageSource="{Binding ChannelImageUrl, TargetNullValue={x:Null}, FallbackValue={x:Null}}" />
             </Ellipse.Fill>
         </Ellipse>
 
-        <!--  2. 右側主內容區  -->
+        <!--  右側主內容區  -->
         <StackPanel Grid.Column="1">
 
             <!--  輸入框 (保留底部一條線)  -->
             <TextBox
+                x:Name="ReplyTextBox"
                 MinHeight="24"
                 Margin="0,0,0,8"
                 VerticalAlignment="Center"
@@ -44,7 +45,7 @@
                 BorderBrush="#888888"
                 BorderThickness="0,0,0,1"
                 FontSize="14"
-                Text="{Binding Content, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
+                Text="{Binding ReplyText, UpdateSourceTrigger=PropertyChanged}"
                 TextWrapping="Wrap"
                 VerticalScrollBarVisibility="Auto" />
 
@@ -77,14 +78,14 @@
                     <!--  取消按鈕 (純文字樣式)  -->
                     <Button
                         Margin="0,0,8,0"
-                        Command="{Binding CancelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Command="{Binding CancelCmd}"
                         Content="取消"
                         Style="{StaticResource MaterialDesignFlatButton}" />
 
                     <!--  回覆按鈕 (圓角實心樣式)  -->
                     <Button
                         materialDesign:ButtonAssist.CornerRadius="16"
-                        Command="{Binding SubmitCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Command="{Binding SubmitCmd}"
                         Content="回覆"
                         Style="{StaticResource MaterialDesignRaisedButton}" />
                 </StackPanel>

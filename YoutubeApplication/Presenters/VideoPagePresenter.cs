@@ -124,6 +124,7 @@ namespace YoutubeApplication.Presenters
             return new CommentItem
             {
                 Id = id,
+                AuthorChannelId = s.AuthorChannelId.Value,
                 AuthorName = s.AuthorDisplayName,
                 ProfileImageUrl = s.AuthorProfileImageUrl,
                 Text = s.TextOriginal,
@@ -142,7 +143,7 @@ namespace YoutubeApplication.Presenters
             });
         }
 
-        public async Task<Result> AddCommentThreadAsync(string videoId, string content)
+        public async Task<Result<CommentItem>> AddCommentThreadAsync(string videoId, string content)
         {
             return await ExecuteAsync(async () =>
             {
@@ -160,11 +161,14 @@ namespace YoutubeApplication.Presenters
                         }
                     }
                 };
-                await _context.CommentThread.AddCommentAsync(request);
+                var commentThread = await _context.CommentThread.AddCommentAsync(request);
+                var comment = commentThread.Snippet.TopLevelComment;
+                var commentItem = await MapToCommentItemInternal(comment.Snippet, comment.Id);
+                return commentItem;
             });
         }
 
-        public async Task<Result> AddCommentAsync(string parentId, string content)
+        public async Task<Result<CommentItem>> AddCommentAsync(string parentId, string content)
         {
             return await ExecuteAsync(async () =>
             {
@@ -176,7 +180,35 @@ namespace YoutubeApplication.Presenters
                         TextOriginal = content
                     }
                 };
-                await _context.Comment.CreateAsync(request);
+                var comment = await _context.Comment.CreateAsync(request);
+                var commentItem = await MapToCommentItemInternal(comment.Snippet, comment.Id);
+
+                return commentItem;
+            });
+        }
+
+        public async Task<Result> UpdateCommentAsync(string commentId, string text)
+        {
+            var request = new CommentUpdateRequest
+            {
+                Id = commentId,
+                Snippet = new CommentSnippet
+                {
+                    TextOriginal = text
+                }
+            };
+
+            return await ExecuteAsync(async () =>
+            {
+                await _context.Comment.UpdateAsync(request);
+            });
+        }
+
+        public async Task<Result> DelCommentAsync(string commentId)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                await _context.Comment.DeleteAsync(commentId);
             });
         }
     }

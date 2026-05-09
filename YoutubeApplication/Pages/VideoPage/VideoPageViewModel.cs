@@ -1,11 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using YoutubeAPI.Models.Comment;
 using YoutubeApplication.Common;
 using YoutubeApplication.Components.CommentComponent;
 using YoutubeApplication.Components.VideoCardComponent;
 using YoutubeApplication.Enums;
-using YoutubeApplication.Helpers;
 using YoutubeApplication.Presenters.Interfaces;
 using YoutubeApplication.Views;
 
@@ -47,11 +45,17 @@ namespace YoutubeApplication.Pages.VideoPage
 
         public bool IsCommentExpanded { get; set; } = false;
 
-        public ICommand CommentExpandedCommand { get; set; }
+        public ICommand CommentExpandCmd { get; set; }
 
-        public ICommand CommentCancelCommand { get; set; }
+        public ICommand CommentCancelCmd { get; set; }
 
-        public ICommand OnSubmitCommentCommand { get; set; }
+        public ICommand SubmitCommentCmd { get; set; }
+
+        public ICommand SubmitSubCommentCmd { get; set; }
+
+        public ICommand UpdateCommentCmd { get; set; }
+
+        public ICommand DelCommentCmd { get; set; }
 
         public ObservableCollection<CommentThreadItem> CommentThreadItems { get; set; } = [];
 
@@ -62,9 +66,12 @@ namespace YoutubeApplication.Pages.VideoPage
             SubscribeCommand = new AsyncRelayCommand(ExecuteSubscribe);
             LikeCommand = new AsyncRelayCommand(() => ExecuteRating(RatingTag.Like));
             DislikeCommand = new AsyncRelayCommand(() => ExecuteRating(RatingTag.Dislike));
-            OnSubmitCommentCommand = new AsyncRelayCommand<string>(SubmitCommentAsync);
-            CommentExpandedCommand = new RelayCommand(() => IsCommentExpanded = true);
-            CommentCancelCommand = new RelayCommand(() => IsCommentExpanded = false);
+            CommentExpandCmd = new RelayCommand(() => IsCommentExpanded = true);
+            CommentCancelCmd = new RelayCommand(() => IsCommentExpanded = false);
+            SubmitCommentCmd = new AsyncRelayCommand<string>(SubmitCommentAsync);
+            SubmitSubCommentCmd = new AsyncRelayCommand<(CommentThreadItem CommentThread, string ReplyText)>(SubmitSubCommentAsync);
+            UpdateCommentCmd = new AsyncRelayCommand<(string CommentId, string Text)>(UpdateCommentAsync);
+            DelCommentCmd = new AsyncRelayCommand<string>(DelCommentAsync);
         }
 
         public async Task ExecuteSubscribe()
@@ -90,13 +97,15 @@ namespace YoutubeApplication.Pages.VideoPage
         {
             VideoCard = (VideoCard)data[0];
 
-            GetCommentsTask();
-            GetChannelInfoTask();
-            GetIsSubscribedTask();
-            LoadVideoDetailsTask();
+            await Task.WhenAll(
+                GetCommentsTask(),
+                GetChannelInfoTask(),
+                GetIsSubscribedTask(),
+                LoadVideoDetailsTask()
+            );
         }
 
-        private async void GetChannelInfoTask()
+        private async Task GetChannelInfoTask()
         {
             var result = await _presenter.GetChannelByIdAsync(VideoCard.ChannelId);
             if (result.IsSuccess && result.Data?.items?.Count > 0)
@@ -108,7 +117,7 @@ namespace YoutubeApplication.Pages.VideoPage
             }
         }
 
-        private async void GetIsSubscribedTask()
+        private async Task GetIsSubscribedTask()
         {
             var result = await _presenter.GetSubscriptionIdAsync(VideoCard.ChannelId);
 
@@ -124,7 +133,7 @@ namespace YoutubeApplication.Pages.VideoPage
             }
         }
 
-        private async void LoadVideoDetailsTask()
+        private async Task LoadVideoDetailsTask()
         {
             var statsTask = _presenter.GetStatisticsAsync(VideoCard.VideoId);
             var ratingTask = _presenter.GetRatingAsync(VideoCard.VideoId);
@@ -147,112 +156,42 @@ namespace YoutubeApplication.Pages.VideoPage
                 UserRating = rating.Data;
         }
 
-        private async void GetCommentsTask()
+        private async Task GetCommentsTask()
         {
+            CommentThreadItems.Clear();
             var result = await _presenter.GetProcessedCommentThreadsAsync(VideoCard.VideoId);
             if (result.IsSuccess && result.Data != null)
                 CommentThreadItems = new ObservableCollection<CommentThreadItem>(result.Data);
         }
 
-        //private async void GetCommentsTask()
-        //{
-        //    CommentThreadItems.Clear();
-
-        //    Debug.WriteLine("1");
-        //    Debug.WriteLine(DateTime.Now);
-        //    var result = await _presenter.GetCommentThreadListAsync(VideoCard.VideoId);
-        //    Debug.WriteLine("2");
-        //    Debug.WriteLine(DateTime.Now);
-        //    if (!(result.IsSuccess && result.Data?.Items?.Count > 0))
-        //        return;
-
-        //    Debug.WriteLine("3");
-        //    Debug.WriteLine(DateTime.Now);
-        //    var commentThreads = result.Data.Items;
-
-        //    var tasks = commentThreads.Select(async c =>
-        //    {
-        //        var item = new CommentThreadItem
-        //        {
-        //            // 處理主留言
-        //            TopLevelComment = await MapToCommentItem(c.Snippet.TopLevelComment.Snippet, c.Snippet.TopLevelComment.Id),
-
-        //            // 處理回覆
-        //            Replies = new ObservableCollection<CommentItem>(
-        //                await Task.WhenAll(c.Replies?.Comments?.Select(x => MapToCommentItem(x.Snippet, x.Id)) ?? [])
-        //            )
-        //        };
-        //        return item;
-        //    });
-
-        //    var results = await Task.WhenAll(tasks);
-        //    Debug.WriteLine("4");
-        //    Debug.WriteLine(DateTime.Now);
-        //    CommentThreadItems = new ObservableCollection<CommentThreadItem>(results);
-        //    Debug.WriteLine("5");
-        //    Debug.WriteLine(DateTime.Now);
-        //}
-
-        private async Task<CommentItem> MapToCommentItem(CommentSnippet s, string id)
+        public async Task SubmitCommentAsync(string replyText)
         {
-            async Task<RatingTag> FetchRatingAsync(string id)
-            {
-                var comment = await _presenter.GetCommentByIdAsync(id);
-                if (comment.Data?.Items?.Count > 0)
-                    return comment.Data.Items[0].Snippet.ViewerRating.ToRatingTag();
-                else
-                    return RatingTag.None;
-            }
-
-            var item = new CommentItem
-            {
-                AuthorName = s.AuthorDisplayName,
-                ProfileImageUrl = s.AuthorProfileImageUrl,
-                Text = s.TextOriginal,
-                UpdatedAt = s.UpdatedAt,
-                LikeCount = s.LikeCount,
-                UserRating = await FetchRatingAsync(id),
-            };
-
-            return item;
+            var result = await _presenter.AddCommentThreadAsync(VideoCard.VideoId, replyText);
+            if (result.IsSuccess && result.Data != null)
+                CommentThreadItems.Insert(0, new CommentThreadItem { TopLevelComment = result.Data });
         }
 
-        public async Task SubmitCommentAsync(string comment)
+        public async Task SubmitSubCommentAsync((CommentThreadItem CommentThread, string ReplyText) parameter)
         {
-            await _presenter.AddCommentThreadAsync(VideoCard.VideoId, comment);
-            CommentThreadItems.Insert(0, new CommentThreadItem
-            {
-                TopLevelComment = new CommentItem
-                {
-                    Id = App.MyChannel.ChannelId,
-                    AuthorName = App.MyChannel.Snippet.Title,
-                    ProfileImageUrl = App.MyChannel.Snippet.Thumbnails.High.Url,
-                    Text = comment,
-                    TextSegments = CommentHelper.ParseComment(comment),
-                    UpdatedAt = DateTime.Now,
-                    LikeCount = 0,
-                    UserRating = RatingTag.None,
-                }
-            });
+            var (commentThread, replyText) = parameter;
+
+            var result = await _presenter.AddCommentAsync(commentThread.TopLevelComment.Id, replyText);
+
+            if (result.IsSuccess && result.Data != null)
+                commentThread.Replies.Insert(0, result.Data);
         }
 
-        public async Task SubmitReplyAsync(string reply)
+        public async Task UpdateCommentAsync((string commentId, string text) parameter)
         {
-            await _presenter.AddCommentAsync(VideoCard.VideoId, comment);
-            CommentThreadItems.Insert(0, new CommentThreadItem
-            {
-                TopLevelComment = new CommentItem
-                {
-                    Id = App.MyChannel.ChannelId,
-                    AuthorName = App.MyChannel.Snippet.Title,
-                    ProfileImageUrl = App.MyChannel.Snippet.Thumbnails.High.Url,
-                    Text = comment,
-                    TextSegments = CommentHelper.ParseComment(comment),
-                    UpdatedAt = DateTime.Now,
-                    LikeCount = 0,
-                    UserRating = RatingTag.None,
-                }
-            });
+            var (commentId, text) = parameter;
+            await _presenter.UpdateCommentAsync(commentId, text);
+            await GetCommentsTask();
+        }
+
+        public async Task DelCommentAsync(string commentId)
+        {
+            await _presenter.DelCommentAsync(commentId);
+            await GetCommentsTask();
         }
     }
 }

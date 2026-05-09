@@ -1,8 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using YoutubeApplication.Common;
-using YoutubeApplication.Components.AddCommentComponent;
 
 namespace YoutubeApplication.Components.CommentComponent
 {
@@ -11,88 +9,69 @@ namespace YoutubeApplication.Components.CommentComponent
     /// </summary>
     public partial class CommentThreadView : UserControl
     {
+        private readonly CommentThreadVm _vm;
+
         public CommentThreadView()
         {
             InitializeComponent();
-            ReplyCommand = new AsyncRelayCommand<string>(ReplyAsync);
-            ReplyExpandedCommand = new RelayCommand(() => IsReplyExpanded = true);
-            ReplyCancelCommand = new RelayCommand(() => IsReplyExpanded = false);
+            _vm = new CommentThreadVm();
+            Root.DataContext = _vm;
         }
-
-        #region 外部 API (Dependency Properties)
 
         public CommentThreadItem CommentThread
         {
-            get => (CommentThreadItem)GetValue(CommentThreadProperty);
-            set => SetValue(CommentThreadProperty, value);
+            get => (CommentThreadItem)GetValue(CommentThreadDp);
+            set => SetValue(CommentThreadDp, value);
         }
 
-        public static readonly DependencyProperty CommentThreadProperty =
+        public static readonly DependencyProperty CommentThreadDp =
             DependencyProperty.Register(
                 nameof(CommentThread),
                 typeof(CommentThreadItem),
                 typeof(CommentThreadView),
-                new PropertyMetadata()
+                new PropertyMetadata((d, e) => ((CommentThreadView)d)._vm.CommentThread = (CommentThreadItem)e.NewValue)
             );
 
-        /// <summary>
-        /// 送出事件
-        /// </summary>
-        public ICommand OnReplyCommand
+        public ICommand OnSubCommentSubmitCmd
         {
-            get { return (ICommand)GetValue(OnReplyProperty); }
-            set { SetValue(OnReplyProperty, value); }
+            get { return (ICommand)GetValue(OnSubCommentSubmitCmdDp); }
+            set { SetValue(OnSubCommentSubmitCmdDp, value); }
         }
 
-        public static readonly DependencyProperty OnReplyProperty =
+        public static readonly DependencyProperty OnSubCommentSubmitCmdDp =
             DependencyProperty.Register(
-                nameof(OnReplyCommand),
+                nameof(OnSubCommentSubmitCmd),
                 typeof(ICommand),
-                typeof(AddCommentView),
-                new PropertyMetadata()
+                typeof(CommentThreadView),
+                new PropertyMetadata((d, e) => ((CommentThreadView)d)._vm.OnSubCommentSubmitCmd = (ICommand)e.NewValue)
             );
 
-        ///// <summary>
-        ///// 點擊
-        ///// </summary>
-        //public ICommand OnClickCommand
-        //{
-        //    get { return (ICommand)GetValue(OnClickCommandProperty); }
-        //    set { SetValue(OnClickCommandProperty, value); }
-        //}
+        public ICommand OnSaveCommentCmd
+        {
+            get { return (ICommand)GetValue(OnSaveCommentCmdDp); }
+            set { SetValue(OnSaveCommentCmdDp, value); }
+        }
 
-        //public static readonly DependencyProperty OnClickCommandProperty =
-        //    DependencyProperty.Register(
-        //        nameof(OnClickCommand),
-        //        typeof(ICommand),
-        //        typeof(VideoCardView),
-        //        new PropertyMetadata()
-        //    );
-
-        #endregion
-
-        public static readonly DependencyProperty IsReplyExpandedProperty =
+        public static readonly DependencyProperty OnSaveCommentCmdDp =
             DependencyProperty.Register(
-                nameof(IsReplyExpanded),
-                typeof(bool),
+                nameof(OnSaveCommentCmd),
+                typeof(ICommand),
                 typeof(CommentThreadView),
-                new PropertyMetadata(false));
+                new PropertyMetadata((d, e) => ((CommentThreadView)d)._vm.OnSaveCommentCmd = (ICommand)e.NewValue)
+            );
 
-        public bool IsReplyExpanded
+        public ICommand OnDelCommentCmd
         {
-            get => (bool)GetValue(IsReplyExpandedProperty);
-            set => SetValue(IsReplyExpandedProperty, value);
+            get { return (ICommand)GetValue(OnDelCommentCmdDp); }
+            set { SetValue(OnDelCommentCmdDp, value); }
         }
 
-        public ICommand ReplyExpandedCommand { get; set; }
-
-        public ICommand ReplyCancelCommand { get; set; }
-
-        public ICommand ReplyCommand { get; set; }
-
-        public async Task ReplyAsync(string comment)
-        {
-            await OnReplyCommand.ExecuteAsync(comment);
-        }
+        public static readonly DependencyProperty OnDelCommentCmdDp =
+            DependencyProperty.Register(
+                nameof(OnDelCommentCmd),
+                typeof(ICommand),
+                typeof(CommentThreadView),
+                new PropertyMetadata((d, e) => ((CommentThreadView)d)._vm.OnDelCommentCmd = (ICommand)e.NewValue)
+            );
     }
 }

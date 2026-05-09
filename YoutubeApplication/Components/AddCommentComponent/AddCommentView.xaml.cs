@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using YoutubeApplication.Common;
+using System.Windows.Threading;
 
 namespace YoutubeApplication.Components.AddCommentComponent
 {
@@ -10,105 +10,70 @@ namespace YoutubeApplication.Components.AddCommentComponent
     /// </summary>
     public partial class AddCommentView : UserControl
     {
+        private readonly AddCommentVm _vm;
+
         public AddCommentView()
         {
             InitializeComponent();
-            SubmitCommand = new AsyncRelayCommand(SubmitExecute, CanSubmitExecute);
-            CancelCommand = new AsyncRelayCommand(CancelExecute);
+            _vm = new AddCommentVm();
+            Root.DataContext = _vm;
+            IsVisibleChanged += AddCommentView_IsVisibleChanged;
         }
 
-        #region 外部 API (Dependency Properties)
-
-        /// <summary>
-        /// 留言內容
-        /// </summary>
-        public string Content
+        private void AddCommentView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            get => (string)GetValue(ContentProperty);
-            set => SetValue(ContentProperty, value);
+            if (e.NewValue is false) return;
+
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ReplyTextBox.Focus();
+                Keyboard.Focus(ReplyTextBox);
+            }), DispatcherPriority.Input);
         }
 
-        public static readonly DependencyProperty ContentProperty =
-            DependencyProperty.Register(
-                nameof(Content),
-                typeof(string),
-                typeof(AddCommentView),
-                new FrameworkPropertyMetadata("", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault)
-            );
-
         /// <summary>
-        /// 頭像連結
+        /// 頻道頭像連結
         /// </summary>
         public string ChannelImageUrl
         {
-            get => (string)GetValue(ChannelImageUrlProperty);
-            set => SetValue(ChannelImageUrlProperty, value);
+            get => (string)GetValue(ChannelImageUrlDp);
+            set => SetValue(ChannelImageUrlDp, value);
         }
 
-        public static readonly DependencyProperty ChannelImageUrlProperty =
+        public static readonly DependencyProperty ChannelImageUrlDp =
             DependencyProperty.Register(
                 nameof(ChannelImageUrl),
                 typeof(string),
                 typeof(AddCommentView),
-                new FrameworkPropertyMetadata()
+                new PropertyMetadata((d, e) => ((AddCommentView)d)._vm.ChannelImageUrl = (string)e.NewValue)
             );
 
-        /// <summary>
-        /// 送出事件
-        /// </summary>
-        public ICommand OnSubmitCommand
+        public ICommand OnCancelCmd
         {
-            get { return (ICommand)GetValue(OnSubmitCommandProperty); }
-            set { SetValue(OnSubmitCommandProperty, value); }
+            get { return (ICommand)GetValue(OnCancelCmdDp); }
+            set { SetValue(OnCancelCmdDp, value); }
         }
 
-        public static readonly DependencyProperty OnSubmitCommandProperty =
+        public static readonly DependencyProperty OnCancelCmdDp =
             DependencyProperty.Register(
-                nameof(OnSubmitCommand),
+                nameof(OnCancelCmd),
                 typeof(ICommand),
                 typeof(AddCommentView),
-                new PropertyMetadata()
+                new PropertyMetadata((d, e) => ((AddCommentView)d)._vm.OnCancelCmd = (ICommand)e.NewValue)
             );
 
-        /// <summary>
-        // 取消事件
-        /// </summary>
-        public ICommand OnCancelCommand
+        public ICommand OnSubmitCmd
         {
-            get { return (ICommand)GetValue(OnCancelCommandProperty); }
-            set { SetValue(OnCancelCommandProperty, value); }
+            get { return (ICommand)GetValue(OnSubmitCmdDp); }
+            set { SetValue(OnSubmitCmdDp, value); }
         }
 
-        public static readonly DependencyProperty OnCancelCommandProperty =
+        public static readonly DependencyProperty OnSubmitCmdDp =
             DependencyProperty.Register(
-                nameof(OnCancelCommand),
+                nameof(OnSubmitCmd),
                 typeof(ICommand),
                 typeof(AddCommentView),
-                new PropertyMetadata()
+                new PropertyMetadata((d, e) => ((AddCommentView)d)._vm.OnSubmitCmd = (ICommand)e.NewValue)
             );
-
-        #endregion
-
-        public ICommand SubmitCommand { get; }
-
-        private bool CanSubmitExecute()
-        {
-            return !string.IsNullOrWhiteSpace(Content) &&
-                   (OnSubmitCommand?.CanExecute(Content) ?? true);
-        }
-
-        private async Task SubmitExecute()
-        {
-            await OnSubmitCommand.ExecuteAsync(Content);
-            Content = "";
-        }
-
-        public ICommand CancelCommand { get; }
-
-        private async Task CancelExecute()
-        {
-            await OnCancelCommand.ExecuteAsync();
-            Content = "";
-        }
     }
 }

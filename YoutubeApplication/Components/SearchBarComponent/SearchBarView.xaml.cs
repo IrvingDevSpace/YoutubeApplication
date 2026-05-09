@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using YoutubeApplication.Common;
 
 namespace YoutubeApplication.Components.SearchBarComponent
@@ -14,6 +15,18 @@ namespace YoutubeApplication.Components.SearchBarComponent
         {
             InitializeComponent();
             SearchCommand = new AsyncRelayCommand(ExecuteSearch, CanExecuteSearch);
+            IsVisibleChanged += SearchBarView_IsVisibleChanged;
+        }
+
+        private void SearchBarView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue is false) return;
+
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                SearchInput.Focus();
+                Keyboard.Focus(SearchInput);
+            }), DispatcherPriority.Input);
         }
 
         #region 外部 API (Dependency Properties)

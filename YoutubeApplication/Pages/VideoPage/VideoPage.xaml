@@ -260,7 +260,7 @@
                             Margin="0,0,12,0"
                             VerticalAlignment="Top">
                             <Ellipse.Fill>
-                                <ImageBrush ImageSource="{Binding MyChannelImageUrl, IsAsync=True}" />
+                                <ImageBrush ImageSource="{Binding MyChannelImageUrl, TargetNullValue={x:Null}, FallbackValue={x:Null}}" />
                             </Ellipse.Fill>
                         </Ellipse>
 
@@ -274,7 +274,7 @@
 
                             <!--  點擊這一整塊區域都會觸發展開  -->
                             <Border.InputBindings>
-                                <MouseBinding Command="{Binding CommentExpandedCommand}" MouseAction="LeftClick" />
+                                <MouseBinding Command="{Binding CommentExpandCmd}" MouseAction="LeftClick" />
                             </Border.InputBindings>
 
                             <!--  這裡用 TextBlock 模擬輸入框的提示文字，不要用 TextBox  -->
@@ -289,8 +289,8 @@
 
                     <addComment:AddCommentView
                         ChannelImageUrl="{Binding MyChannelImageUrl}"
-                        OnCancelCommand="{Binding CommentCancelCommand}"
-                        OnSubmitCommand="{Binding OnSubmitCommentCommand}">
+                        OnCancelCmd="{Binding CommentCancelCmd}"
+                        OnSubmitCmd="{Binding SubmitCommentCmd}">
                         <addComment:AddCommentView.Style>
                             <Style TargetType="UserControl">
                                 <Setter Property="Visibility" Value="Collapsed" />
@@ -307,21 +307,12 @@
                 <ItemsControl ItemsSource="{Binding CommentThreadItems}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <comment:CommentThreadView Margin="4" CommentThread="{Binding}" />
-                            <!--<TextBlock>
-                                <Run Text="{Binding TopLevelComment.Text}" />
-                                <Run Text="{Binding TopLevelComment.UserRating}" />
-                                <ItemsControl ItemsSource="{Binding Replies}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock>
-                                                <Run Text="{Binding Text}" />
-                                                <Run Text="{Binding UserRating}" />
-                                            </TextBlock>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </TextBlock>-->
+                            <comment:CommentThreadView
+                                Margin="4"
+                                CommentThread="{Binding}"
+                                OnDelCommentCmd="{Binding DataContext.DelCommentCmd, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                OnSaveCommentCmd="{Binding DataContext.UpdateCommentCmd, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                OnSubCommentSubmitCmd="{Binding DataContext.SubmitSubCommentCmd, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

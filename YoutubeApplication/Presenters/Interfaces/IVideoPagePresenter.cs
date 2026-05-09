@@ -30,8 +30,12 @@ namespace YoutubeApplication.Presenters.Interfaces
 
         Task<Result<CommentListResponse>> GetCommentByIdAsync(string commentId);
 
-        Task<Result> AddCommentThreadAsync(string videoId, string content);
+        Task<Result<CommentItem>> AddCommentThreadAsync(string videoId, string content);
 
-        Task<Result> AddCommentAsync(string parentId, string content);
+        Task<Result<CommentItem>> AddCommentAsync(string parentId, string content);
+
+        Task<Result> UpdateCommentAsync(string commentId, string text);
+
+        Task<Result> DelCommentAsync(string commentId);
     }
 }

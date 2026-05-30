@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using YoutubeApplication.Common;
 using YoutubeApplication.Components.CommentComponent;
+using YoutubeApplication.Components.PlaylistComponent;
 using YoutubeApplication.Components.VideoCardComponent;
 using YoutubeApplication.Enums;
 using YoutubeApplication.Presenters.Interfaces;
@@ -59,38 +60,45 @@ namespace YoutubeApplication.Pages.VideoPage
 
         public ObservableCollection<CommentThreadItem> CommentThreadItems { get; set; } = [];
 
+        public bool IsPlaylistOpen { get; set; } = false;
+
+        public ObservableCollection<PlaylistItemVm> PlaylistItems { get; set; } = [];
+
+        public ICommand TogglePlaylistItemCmd { get; set; }
+
         public VideoPageViewModel(IVideoPagePresenter presenter)
         {
             _presenter = presenter;
 
-            SubscribeCommand = new AsyncRelayCommand(ExecuteSubscribe);
-            LikeCommand = new AsyncRelayCommand(() => ExecuteRating(RatingTag.Like));
-            DislikeCommand = new AsyncRelayCommand(() => ExecuteRating(RatingTag.Dislike));
+            SubscribeCommand = new AsyncRelayCommand(ExecuteSubscribeAsync);
+            LikeCommand = new AsyncRelayCommand(() => ExecuteRatingAsync(RatingTag.Like));
+            DislikeCommand = new AsyncRelayCommand(() => ExecuteRatingAsync(RatingTag.Dislike));
             CommentExpandCmd = new RelayCommand(() => IsCommentExpanded = true);
             CommentCancelCmd = new RelayCommand(() => IsCommentExpanded = false);
             SubmitCommentCmd = new AsyncRelayCommand<string>(SubmitCommentAsync);
             SubmitSubCommentCmd = new AsyncRelayCommand<(CommentThreadItem CommentThread, string ReplyText)>(SubmitSubCommentAsync);
             UpdateCommentCmd = new AsyncRelayCommand<(string CommentId, string Text)>(UpdateCommentAsync);
             DelCommentCmd = new AsyncRelayCommand<string>(DelCommentAsync);
+            TogglePlaylistItemCmd = new AsyncRelayCommand<(string PlaylistId, bool IsSelected)>(TogglePlaylistItemAsync);
         }
 
-        public async Task ExecuteSubscribe()
+        public async Task ExecuteSubscribeAsync()
         {
             if (!IsSubscribed)
                 await _presenter.SubscribeAsync(VideoCard.ChannelId);
             else
                 await _presenter.UnsubscribeAsync(_currentSubscriptionId);
 
-            GetIsSubscribedTask();
+            await GetIsSubscribedAsync();
         }
 
-        public async Task ExecuteRating(RatingTag target)
+        public async Task ExecuteRatingAsync(RatingTag target)
         {
             var nextRating = (UserRating == target) ? RatingTag.None : target;
 
             await _presenter.RateAsync(VideoCard.VideoId, nextRating);
 
-            LoadVideoDetailsTask();
+            await LoadVideoDetailsAsync();
         }
 
         public override async void ApplyDataParamsAsync(object[] data)
@@ -98,14 +106,15 @@ namespace YoutubeApplication.Pages.VideoPage
             VideoCard = (VideoCard)data[0];
 
             await Task.WhenAll(
-                GetCommentsTask(),
-                GetChannelInfoTask(),
-                GetIsSubscribedTask(),
-                LoadVideoDetailsTask()
+                GetCommentsAsync(),
+                GetChannelInfoAsync(),
+                GetIsSubscribedAsync(),
+                LoadVideoDetailsAsync(),
+                GetPlaylistItemsAsync()
             );
         }
 
-        private async Task GetChannelInfoTask()
+        private async Task GetChannelInfoAsync()
         {
             var result = await _presenter.GetChannelByIdAsync(VideoCard.ChannelId);
             if (result.IsSuccess && result.Data?.items?.Count > 0)
@@ -117,7 +126,7 @@ namespace YoutubeApplication.Pages.VideoPage
             }
         }
 
-        private async Task GetIsSubscribedTask()
+        private async Task GetIsSubscribedAsync()
         {
             var result = await _presenter.GetSubscriptionIdAsync(VideoCard.ChannelId);
 
@@ -133,7 +142,7 @@ namespace YoutubeApplication.Pages.VideoPage
             }
         }
 
-        private async Task LoadVideoDetailsTask()
+        private async Task LoadVideoDetailsAsync()
         {
             var statsTask = _presenter.GetStatisticsAsync(VideoCard.VideoId);
             var ratingTask = _presenter.GetRatingAsync(VideoCard.VideoId);
@@ -156,7 +165,17 @@ namespace YoutubeApplication.Pages.VideoPage
                 UserRating = rating.Data;
         }
 
-        private async Task GetCommentsTask()
+        private async Task GetPlaylistItemsAsync()
+        {
+            PlaylistItems.Clear();
+
+            var result = await _presenter.GetMyPlaylistsAsync(VideoCard.VideoId);
+
+            if (result.IsSuccess && result.Data?.Count > 0)
+                PlaylistItems = new ObservableCollection<PlaylistItemVm>(result.Data);
+        }
+
+        private async Task GetCommentsAsync()
         {
             CommentThreadItems.Clear();
             var result = await _presenter.GetProcessedCommentThreadsAsync(VideoCard.VideoId);
@@ -164,14 +183,14 @@ namespace YoutubeApplication.Pages.VideoPage
                 CommentThreadItems = new ObservableCollection<CommentThreadItem>(result.Data);
         }
 
-        public async Task SubmitCommentAsync(string replyText)
+        private async Task SubmitCommentAsync(string replyText)
         {
             var result = await _presenter.AddCommentThreadAsync(VideoCard.VideoId, replyText);
             if (result.IsSuccess && result.Data != null)
                 CommentThreadItems.Insert(0, new CommentThreadItem { TopLevelComment = result.Data });
         }
 
-        public async Task SubmitSubCommentAsync((CommentThreadItem CommentThread, string ReplyText) parameter)
+        private async Task SubmitSubCommentAsync((CommentThreadItem CommentThread, string ReplyText) parameter)
         {
             var (commentThread, replyText) = parameter;
 
@@ -181,17 +200,28 @@ namespace YoutubeApplication.Pages.VideoPage
                 commentThread.Replies.Insert(0, result.Data);
         }
 
-        public async Task UpdateCommentAsync((string commentId, string text) parameter)
+        private async Task UpdateCommentAsync((string commentId, string text) parameter)
         {
             var (commentId, text) = parameter;
             await _presenter.UpdateCommentAsync(commentId, text);
-            await GetCommentsTask();
+            await GetCommentsAsync();
         }
 
-        public async Task DelCommentAsync(string commentId)
+        private async Task DelCommentAsync(string commentId)
         {
             await _presenter.DelCommentAsync(commentId);
-            await GetCommentsTask();
+            await GetCommentsAsync();
+        }
+
+        private async Task TogglePlaylistItemAsync((string PlaylistId, bool IsSelected) parameter)
+        {
+            var (playlistId, isSelected) = parameter;
+
+            var result = await _presenter.PlaylistToggleVideoAsync(
+                isSelected, playlistId, VideoCard.VideoId);
+
+            if (result.IsSuccess)
+                IsPlaylistOpen = false;
         }
     }
 }

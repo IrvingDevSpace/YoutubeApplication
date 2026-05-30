@@ -298,7 +298,7 @@
                                                 <Button
                                                     Height="40"
                                                     Padding="16,0"
-                                                    Command="{Binding EditCommand}"
+                                                    Command="{Binding DataContext.EditCommentCmd, ElementName=Root}"
                                                     Foreground="White"
                                                     Style="{StaticResource MaterialDesignFlatButton}">
                                                     <Grid Width="80">
@@ -323,7 +323,7 @@
                                                 <Button
                                                     Height="40"
                                                     Padding="16,0"
-                                                    Command="{Binding DataContext.DelCommentCmd, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    Command="{Binding DataContext.DelCommentCmd, ElementName=Root}"
                                                     CommandParameter="{Binding Id}"
                                                     Foreground="White"
                                                     Style="{StaticResource MaterialDesignFlatButton}">

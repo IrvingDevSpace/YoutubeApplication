@@ -7,6 +7,7 @@ using YoutubeAPI.Models.Subscription;
 using YoutubeAPI.Models.Video;
 using YoutubeApplication.Common;
 using YoutubeApplication.Components.CommentComponent;
+using YoutubeApplication.Components.PlaylistComponent;
 using YoutubeApplication.Enums;
 using YoutubeApplication.Helpers;
 using YoutubeApplication.Presenters.Base;
@@ -209,6 +210,55 @@ namespace YoutubeApplication.Presenters
             return await ExecuteAsync(async () =>
             {
                 await _context.Comment.DeleteAsync(commentId);
+            });
+        }
+
+        public async Task<Result<List<PlaylistItemVm>>> GetMyPlaylistsAsync(string currentVideoId)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                var response = await _context.Playlist.GetMyPlaylistsAsync();
+                if (response?.Items == null) return [];
+
+                var tasks = response.Items.Select(async x => new PlaylistItemVm
+                {
+                    PlaylistId = x.Id,
+
+                    Title = x.Snippet.Title,
+                    ImgUrl = x.Snippet.Thumbnails.High.Url,
+                    IsSelected = await _context.PlaylistItem.CheckVideoInPlaylistAsync(x.Id, currentVideoId)
+                });
+
+                var results = await Task.WhenAll(tasks);
+                return results.ToList();
+            });
+        }
+
+        private async Task<Result> PlaylistAddVideoAsync(string playlistId, string currentVideoId)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                await _context.PlaylistItem.AddVideoAsync(playlistId, currentVideoId);
+            });
+        }
+
+        private async Task<Result> PlaylistDelVideoAsync(string playlistId, string currentVideoId)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                await _context.PlaylistItem.DeleteVideoAsync(playlistId, currentVideoId);
+            });
+        }
+
+        public async Task<Result> PlaylistToggleVideoAsync(
+            bool isSelected, string playlistId, string currentVideoId)
+        {
+            return await ExecuteAsync(async () =>
+            {
+                if (isSelected)
+                    await PlaylistAddVideoAsync(playlistId, currentVideoId);
+                else
+                    await PlaylistDelVideoAsync(playlistId, currentVideoId);
             });
         }
     }

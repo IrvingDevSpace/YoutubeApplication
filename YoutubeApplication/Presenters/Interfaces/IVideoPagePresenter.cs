@@ -4,6 +4,7 @@ using YoutubeAPI.Models.Subscription;
 using YoutubeAPI.Models.Video;
 using YoutubeApplication.Common;
 using YoutubeApplication.Components.CommentComponent;
+using YoutubeApplication.Components.PlaylistComponent;
 using YoutubeApplication.Enums;
 
 namespace YoutubeApplication.Presenters.Interfaces
@@ -37,5 +38,10 @@ namespace YoutubeApplication.Presenters.Interfaces
         Task<Result> UpdateCommentAsync(string commentId, string text);
 
         Task<Result> DelCommentAsync(string commentId);
+
+        Task<Result<List<PlaylistItemVm>>> GetMyPlaylistsAsync(string currentVideoId);
+
+        Task<Result> PlaylistToggleVideoAsync(
+            bool isSelected, string playlistId, string currentVideoId);
     }
 }

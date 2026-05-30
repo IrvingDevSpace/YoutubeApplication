@@ -9,6 +9,7 @@
     xmlns:local="clr-namespace:YoutubeApplication.Pages.VideoPage"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:playlist="clr-namespace:YoutubeApplication.Components.PlaylistComponent"
     xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     Title="VideoPage"
     d:DesignHeight="450"
@@ -184,6 +185,98 @@
                                             </materialDesign:PackIcon.Style>
                                         </materialDesign:PackIcon>
                                     </Button>
+
+                                    <ToggleButton
+                                        x:Name="SaveButton"
+                                        Height="36"
+                                        Padding="16,4"
+                                        materialDesign:ButtonAssist.CornerRadius="18"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        IsChecked="{Binding IsPlaylistOpen}"
+                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                            <materialDesign:PackIcon
+                                                Margin="0,0,6,0"
+                                                VerticalAlignment="Center"
+                                                Kind="BookmarkOutline" />
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                FontWeight="SemiBold"
+                                                Text="儲存" />
+                                        </StackPanel>
+                                    </ToggleButton>
+
+                                    <Popup
+                                        x:Name="PlaylistPopup"
+                                        AllowsTransparency="True"
+                                        IsOpen="{Binding IsPlaylistOpen}"
+                                        Placement="Top"
+                                        PlacementTarget="{Binding ElementName=SaveButton}"
+                                        PopupAnimation="Fade"
+                                        StaysOpen="False"
+                                        VerticalOffset="-10">
+                                        <materialDesign:Card
+                                            Background="#212121"
+                                            Foreground="White"
+                                            UniformCornerRadius="12">
+                                            <Grid Margin="0,16,0,16">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+
+                                                <TextBlock
+                                                    Grid.Row="0"
+                                                    Margin="16,0,16,12"
+                                                    FontSize="16"
+                                                    FontWeight="Bold"
+                                                    Text="儲存至..." />
+
+                                                <ScrollViewer
+                                                    Grid.Row="1"
+                                                    MaxHeight="250"
+                                                    HorizontalScrollBarVisibility="Disabled"
+                                                    VerticalScrollBarVisibility="Auto">
+                                                    <ItemsControl x:Name="PlaylistItemsControl" ItemsSource="{Binding PlaylistItems}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <playlist:PlaylistView
+                                                                    Margin="0,0,0,4"
+                                                                    OnClickCmd="{Binding DataContext.TogglePlaylistItemCmd, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                    PlaylistItem="{Binding}" />
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                </ScrollViewer>
+
+                                                <Button
+                                                    Grid.Row="2"
+                                                    Height="36"
+                                                    Margin="16,12,16,0"
+                                                    materialDesign:ButtonAssist.CornerRadius="18"
+                                                    Background="#333333"
+                                                    BorderThickness="0"
+                                                    Cursor="Hand"
+                                                    Foreground="White"
+                                                    Style="{StaticResource MaterialDesignFlatButton}">
+                                                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                                        <materialDesign:PackIcon
+                                                            Margin="0,0,8,0"
+                                                            VerticalAlignment="Center"
+                                                            Kind="Plus" />
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            FontSize="14"
+                                                            Text="新增播放清單" />
+                                                    </StackPanel>
+                                                </Button>
+                                            </Grid>
+                                        </materialDesign:Card>
+                                    </Popup>
+
                                 </StackPanel>
                             </Border>
                         </StackPanel>

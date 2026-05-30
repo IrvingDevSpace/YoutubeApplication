@@ -20,6 +20,10 @@ namespace YoutubeApplication.Views.Home
 
         public ICommand CloseSearchFilterCommand { get; }
 
+        public string ChannelImageUrl { get; set; } = App.MyChannel.Snippet.Thumbnails.High.Url;
+
+        public ICommand OpenStudioCmd { get; }
+
         public HomeViewModel()
         {
             //_navService = navService;
@@ -40,6 +44,8 @@ namespace YoutubeApplication.Views.Home
             });
 
             CloseSearchFilterCommand = new RelayCommand(() => IsSearchFilterOpen = false);
+
+            OpenStudioCmd = new RelayCommand(() => App.NavService.Navigate("StudioPage"));
         }
 
         private async Task ExecuteSearchAsync()
